@@ -405,6 +405,10 @@
           <label for="stardust">Masterless Stardust:</label>
           <input type="number" id="stardust" value="0" min="0" max="999999" step="75" oninput="validateAndUpdateResources(this)">
         </div>
+        <div>
+          <label for="starglitter">Masterless Starglitter:</label>
+          <input type="number" id="starglitter" value="0" min="0" max="999999" step="5" oninput="validateAndUpdateResources(this)">
+        </div>
       </div>
       <div id="resourceSummary" class="cost-breakdown">
         <h4>Total Available Pulls: <span id="totalPulls">0</span></h4>
@@ -413,6 +417,7 @@
           <div>Fates: <span id="fatePulls">0</span> pulls</div>
           <div>Genesis: <span id="genesisPulls">0</span> pulls</div>
           <div>Stardust: <span id="stardustPulls">0</span> pulls</div>
+          <div>Starglitter: <span id="starglitterPulls">0</span> pulls</div>
         </div>
       </div>
     </div>
@@ -775,12 +780,14 @@ function updateResourceSummary() {
   const f = +document.getElementById('fates').value || 0;
   const g = +document.getElementById('genesis').value || 0;
   const s = +document.getElementById('stardust').value || 0;
-  const pp = Math.floor(p / 160), fp = f, gp = Math.floor(g / 160), sp = Math.floor(s / 75);
-  const total = pp + fp + gp + sp;
+  const sg = +document.getElementById('starglitter').value || 0;
+  const pp = Math.floor(p / 160), fp = f, gp = Math.floor(g / 160), sp = Math.floor(s / 75), sgp = Math.floor(sg / 5);
+  const total = pp + fp + gp + sp + sgp;
   document.getElementById('primoPulls').textContent = pp;
   document.getElementById('fatePulls').textContent = fp;
   document.getElementById('genesisPulls').textContent = gp;
   document.getElementById('stardustPulls').textContent = sp;
+  document.getElementById('starglitterPulls').textContent = sgp;
   document.getElementById('totalPulls').textContent = total;
   updatePityProgress();
 }
@@ -922,6 +929,7 @@ function saveConfiguration() {
     fates: document.getElementById('fates').value,
     genesis: document.getElementById('genesis').value,
     stardust: document.getElementById('stardust').value,
+    starglitter: document.getElementById('starglitter').value,
     wantCharacter: document.getElementById('wantCharacter').checked,
     constellations: document.getElementById('constellations').value,
     charPity: document.getElementById('charPity').value,
@@ -955,6 +963,7 @@ function loadConfiguration() {
   document.getElementById('fates').value = config.fates || 0;
   document.getElementById('genesis').value = config.genesis || 0;
   document.getElementById('stardust').value = config.stardust || 0;
+  document.getElementById('starglitter').value = config.starglitter || 0;
   
   document.getElementById('wantCharacter').checked = config.wantCharacter;
   document.getElementById('constellations').value = config.constellations || 0;
@@ -1097,6 +1106,7 @@ function saveConfiguration() {
     fates: document.getElementById('fates').value,
     genesis: document.getElementById('genesis').value,
     stardust: document.getElementById('stardust').value,
+    starglitter: document.getElementById('starglitter').value,
     wantCharacter: document.getElementById('wantCharacter').checked,
     constellations: document.getElementById('constellations').value,
     charPity: document.getElementById('charPity').value,
@@ -1167,6 +1177,7 @@ function loadUserConfiguration(config) {
   document.getElementById('fates').value = config.fates || 0;
   document.getElementById('genesis').value = config.genesis || 0;
   document.getElementById('stardust').value = config.stardust || 0;
+  document.getElementById('starglitter').value = config.starglitter || 0;
   
   document.getElementById('wantCharacter').checked = config.wantCharacter;
   document.getElementById('constellations').value = config.constellations || 0;
@@ -1220,6 +1231,7 @@ function exportConfiguration() {
     fates: document.getElementById('fates').value,
     genesis: document.getElementById('genesis').value,
     stardust: document.getElementById('stardust').value,
+    starglitter: document.getElementById('starglitter').value,
     wantCharacter: document.getElementById('wantCharacter').checked,
     constellations: document.getElementById('constellations').value,
     charPity: document.getElementById('charPity').value,
