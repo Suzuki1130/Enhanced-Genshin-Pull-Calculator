@@ -233,6 +233,75 @@
       margin: 0 8px;
       font-size: 18px;
     }
+    
+    /* Loading spinner styles */
+    .loading-spinner {
+      display: none;
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid #667eea;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .calculating {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .calculating .loading-spinner {
+      display: inline-block;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .theme-switch {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 10px 0;
+      }
+      
+      .input-group {
+        grid-template-columns: 1fr;
+      }
+      
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+    }
+    
+    /* Accessibility improvements */
+    button:focus, input:focus, select:focus {
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    }
+    
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -246,11 +315,11 @@
       <div class="input-group">
         <div>
           <label for="username">Username:</label>
-          <input type="text" id="username" placeholder="Enter your username">
+          <input type="text" id="username" placeholder="Enter your username" onkeypress="handleEnterKey(event, login)">
         </div>
         <div>
           <label for="password">Password:</label>
-          <input type="password" id="password" placeholder="Enter your password">
+          <input type="password" id="password" placeholder="Enter your password" onkeypress="handleEnterKey(event, login)">
         </div>
       </div>
       <button onclick="login()" style="margin-top: 20px;">Login</button>
@@ -271,15 +340,15 @@
       <div class="input-group">
         <div>
           <label for="newUsername">Username:</label>
-          <input type="text" id="newUsername" placeholder="Choose a username">
+          <input type="text" id="newUsername" placeholder="Choose a username" onkeypress="handleEnterKey(event, register)">
         </div>
         <div>
           <label for="newPassword">Password:</label>
-          <input type="password" id="newPassword" placeholder="Choose a password">
+          <input type="password" id="newPassword" placeholder="Choose a password" onkeypress="handleEnterKey(event, register)">
         </div>
         <div>
           <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm your password">
+          <input type="password" id="confirmPassword" placeholder="Confirm your password" onkeypress="handleEnterKey(event, register)">
         </div>
       </div>
       <button onclick="register()" style="margin-top: 20px;">Register</button>
@@ -322,19 +391,19 @@
       <div class="input-group">
         <div>
           <label for="primos">Primogems:</label>
-          <input type="number" id="primos" value="0" min="0" oninput="updateResourceSummary()">
+          <input type="number" id="primos" value="0" min="0" max="999999" step="1" oninput="validateAndUpdateResources(this)">
         </div>
         <div>
           <label for="fates">Intertwined Fates:</label>
-          <input type="number" id="fates" value="0" min="0" oninput="updateResourceSummary()">
+          <input type="number" id="fates" value="0" min="0" max="9999" step="1" oninput="validateAndUpdateResources(this)">
         </div>
         <div>
           <label for="genesis">Genesis Crystals:</label>
-          <input type="number" id="genesis" value="0" min="0" oninput="updateResourceSummary()">
+          <input type="number" id="genesis" value="0" min="0" max="999999" step="1" oninput="validateAndUpdateResources(this)">
         </div>
         <div>
           <label for="stardust">Masterless Stardust:</label>
-          <input type="number" id="stardust" value="0" min="0" oninput="updateResourceSummary()">
+          <input type="number" id="stardust" value="0" min="0" max="999999" step="75" oninput="validateAndUpdateResources(this)">
         </div>
       </div>
       <div id="resourceSummary" class="cost-breakdown">
@@ -370,7 +439,7 @@
           </div>
           <div>
             <label for="charPity">Character Pity:</label>
-            <input type="number" id="charPity" min="0" max="89" value="0">
+            <input type="number" id="charPity" min="0" max="89" value="0" oninput="updatePityProgress()">
             <div class="progress-bar">
               <div id="charPityProgress" class="progress-fill" style="width: 0%"></div>
             </div>
@@ -381,6 +450,16 @@
               <option value="false">No (50/50)</option>
               <option value="true">Yes (Guaranteed)</option>
             </select>
+          </div>
+          <div>
+            <label for="capturingRadiance">Capturing Radiance (v5.0+)</label>
+            <select id="capturingRadiance">
+              <option value="false">Disabled (Classic 50/50)</option>
+              <option value="true" selected>Enabled (~55% effective rate)</option>
+            </select>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--label-color); line-height: 1.4;">
+              <strong>ℹ️ Capturing Radiance:</strong> When you lose the 50/50, there's a 10% chance the standard 5-star converts to the featured character, boosting your effective win rate from 50% to ~55%.
+            </div>
           </div>
         </div>
       </div>
@@ -405,7 +484,7 @@
           </div>
           <div>
             <label for="weapPity">Weapon Pity:</label>
-            <input type="number" id="weapPity" min="0" max="79" value="0">
+            <input type="number" id="weapPity" min="0" max="79" value="0" oninput="updatePityProgress()">
             <div class="progress-bar">
               <div id="weapPityProgress" class="progress-fill" style="width: 0%"></div>
             </div>
@@ -457,7 +536,10 @@
       </div>
     </div>
 
-    <button onclick="calculate()">Calculate Probabilities</button>
+    <button id="calculateBtn" onclick="calculate()">
+      Calculate Probabilities
+      <div class="loading-spinner"></div>
+    </button>
 
     <div id="results"></div>
 
@@ -475,6 +557,16 @@
         </div>
         <div>
           <button onclick="loadConfiguration()" style="margin-top: 0;">Load Saved Configuration</button>
+        </div>
+        <div>
+          <button onclick="exportConfiguration()" style="margin-top: 0;">Export Configuration</button>
+        </div>
+        <div>
+          <button onclick="document.getElementById('importFile').click()" style="margin-top: 0;">Import Configuration</button>
+          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importConfiguration(event)">
+        </div>
+        <div>
+          <button onclick="exportResults()" style="margin-top: 0;" id="exportResultsBtn" disabled>Export Results (CSV)</button>
         </div>
       </div>
     </div>
@@ -509,7 +601,7 @@ class GenshinCalculator {
     return Math.min(baseRate + (1 - baseRate) * Math.pow(softPityProgress, 2), 1.0);
   }
 
-  simulateSession(banner, goal, currentPity, isGuaranteed, fatePoints, availablePulls) {
+  simulateSession(banner, goal, currentPity, isGuaranteed, fatePoints, availablePulls, capturingRadiance = false) {
     let pity = currentPity, guaranteed = isGuaranteed, weaponPoints = fatePoints;
     let pullsUsed = 0, fiveStarsObtained = 0, targetObtained = 0;
     while (targetObtained < goal && pullsUsed < availablePulls) {
@@ -521,9 +613,27 @@ class GenshinCalculator {
         fiveStarsObtained++;
         pity = 0;
         if (banner === 'character') {
-          if (guaranteed || Math.random() < 0.5) {
+          if (guaranteed) {
+            // Already guaranteed, definitely get featured character
             targetObtained++; guaranteed = false;
-          } else guaranteed = true;
+          } else {
+            // 50/50 situation
+            const wonFiftyFifty = Math.random() < 0.5;
+            if (wonFiftyFifty) {
+              // Won 50/50, got featured character
+              targetObtained++; guaranteed = false;
+            } else {
+              // Lost 50/50, got standard character
+              // Check for Capturing Radiance if enabled
+              if (capturingRadiance && Math.random() < 0.1) {
+                // 10% chance to convert standard to featured
+                targetObtained++; guaranteed = false;
+              } else {
+                // Standard loss, next is guaranteed
+                guaranteed = true;
+              }
+            }
+          }
         } else {
           if (weaponPoints >= 1 || Math.random() < 1/3) {
             targetObtained++; weaponPoints = 0;
@@ -541,33 +651,43 @@ class GenshinCalculator {
     };
   }
 
-  simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls) {
+  simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, capturingRadiance = false) {
     let totalPullsUsed = 0, charObtained = 0, weapObtained = 0;
+    let charSuccess = false, weapSuccess = false;
+    
     if (charGoal > 0) {
-      const charResult = this.simulateSession('character', charGoal, charPity, charGuaranteed, 0, availablePulls);
-      charObtained = Math.min(charGoal, charResult.fiveStarsObtained);
+      const charResult = this.simulateSession('character', charGoal, charPity, charGuaranteed, 0, availablePulls, capturingRadiance);
+      charObtained = charResult.fiveStarsObtained;
       totalPullsUsed += charResult.pullsUsed;
+      charSuccess = charResult.success;
+    } else {
+      charSuccess = true; // No character goal means automatic success
     }
+    
     if (weapGoal > 0 && totalPullsUsed < availablePulls) {
       const weapResult = this.simulateSession('weapon', weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls - totalPullsUsed);
-      weapObtained = Math.min(weapGoal, weapResult.fiveStarsObtained);
+      weapObtained = weapResult.fiveStarsObtained;
       totalPullsUsed += weapResult.pullsUsed;
+      weapSuccess = weapResult.success;
+    } else if (weapGoal === 0) {
+      weapSuccess = true; // No weapon goal means automatic success
     }
+    
     return {
-      success: charObtained >= charGoal && weapObtained >= weapGoal,
+      success: charSuccess && weapSuccess,
       totalPullsUsed,
       charObtained,
       weapObtained,
-      charSuccess: charObtained >= charGoal,
-      weapSuccess: weapObtained >= weapGoal
+      charSuccess,
+      weapSuccess
     };
   }
 
-  runCombinedSimulation(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, numSims) {
+  runCombinedSimulation(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, numSims, capturingRadiance = false) {
     const results = [];
     let fullSuccess = 0, charSuccess = 0, weapSuccess = 0;
     for (let i = 0; i < numSims; i++) {
-      const res = this.simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls);
+      const res = this.simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, capturingRadiance);
       results.push(res);
       if (res.success) fullSuccess++;
       if (res.charSuccess || charGoal === 0) charSuccess++;
@@ -666,8 +786,13 @@ function updateResourceSummary() {
 }
 
 function updatePityProgress() {
-  const char = +document.getElementById('charPity').value || 0;
-  const weap = +document.getElementById('weapPity').value || 0;
+  const char = Math.max(0, Math.min(89, +document.getElementById('charPity').value || 0));
+  const weap = Math.max(0, Math.min(79, +document.getElementById('weapPity').value || 0));
+  
+  // Update the input values to match the clamped values
+  document.getElementById('charPity').value = char;
+  document.getElementById('weapPity').value = weap;
+  
   document.getElementById('charPityProgress').style.width = (char / 90 * 100) + '%';
   document.getElementById('weapPityProgress').style.width = (weap / 80 * 100) + '%';
 }
@@ -682,17 +807,35 @@ function toggleWeaponInputs() {
   document.getElementById('weaponInputs').style.display = checked ? 'block' : 'none';
 }
 
-function calculate() {
+async function calculate() {
+  const calculateBtn = document.getElementById('calculateBtn');
   const totalPulls = +document.getElementById('totalPulls').textContent;
   const wantChar = document.getElementById('wantCharacter').checked;
   const wantWeap = document.getElementById('wantWeapon').checked;
+  
+  // Input validation
+  if (!wantChar && !wantWeap) {
+    alert('Please select at least one goal (character or weapon).');
+    return;
+  }
+  
+  if (totalPulls === 0) {
+    alert('Please enter your available resources (primogems, fates, etc.).');
+    return;
+  }
+  
+  // Show loading state
+  calculateBtn.classList.add('calculating');
+  calculateBtn.disabled = true;
+  
   const charGoal = wantChar ? +document.getElementById('constellations').value + 1 : 0;
   const weapGoal = wantWeap ? +document.getElementById('refinements').value + 1 : 0;
-  const charPity = +document.getElementById('charPity').value || 0;
-  const weapPity = +document.getElementById('weapPity').value || 0;
+  const charPity = Math.max(0, Math.min(89, +document.getElementById('charPity').value || 0));
+  const weapPity = Math.max(0, Math.min(79, +document.getElementById('weapPity').value || 0));
   const charGuaranteed = document.getElementById('charGuaranteed').value === 'true';
   const weapGuaranteed = document.getElementById('weapGuaranteed').value === 'true';
   const fatePoints = +document.getElementById('fatepoints').value;
+  const capturingRadiance = wantChar && document.getElementById('capturingRadiance').value === 'true';
   const numSims = +document.getElementById('simulations').value;
   const mode = document.getElementById('luckMode').value;
 
@@ -702,7 +845,7 @@ function calculate() {
     const simResults = calculator.runCombinedSimulation(
       charGoal, charPity, charGuaranteed,
       weapGoal, weapPity, weapGuaranteed,
-      fatePoints, totalPulls, numSims
+      fatePoints, totalPulls, numSims, capturingRadiance
     );
 
     output += '<h3>Monte Carlo Simulation Results</h3>';
@@ -766,110 +909,12 @@ function calculate() {
 
   output += '</div>';
   document.getElementById('results').innerHTML = output;
+  
+  // Hide loading state
+  calculateBtn.classList.remove('calculating');
+  calculateBtn.disabled = false;
 }
-function createChart(simResults) {
-  // Get the canvas element
-  const ctx = document.getElementById('resultsChart').getContext('2d');
-  
-  // Destroy existing chart if it exists
-  if (window.resultsChartInstance) {
-    window.resultsChartInstance.destroy();
-  }
-  
-  // Create histogram data from simulation results
-  const pullsData = simResults.results.filter(r => r.success).map(r => r.totalPullsUsed);
-  
-  if (pullsData.length === 0) {
-    return; // No successful pulls to chart
-  }
-  
-  // Find min and max for binning
-  const min = Math.min(...pullsData);
-  const max = Math.max(...pullsData);
-  
-  // Create bins (10 bins between min and max)
-  const binSize = Math.ceil((max - min) / 10);
-  const bins = Array.from({length: 10}, (_, i) => min + i * binSize);
-  
-  // Count pulls in each bin
-  const counts = Array(bins.length).fill(0);
-  pullsData.forEach(pulls => {
-    const binIndex = Math.min(Math.floor((pulls - min) / binSize), bins.length - 1);
-    counts[binIndex]++;
-  });
-  
-  // Convert counts to percentages
-  const percentages = counts.map(count => (count / pullsData.length) * 100);
-  
-  // Create labels for x-axis
-  const labels = bins.map((bin, i) => 
-    i < bins.length - 1 ? 
-    `${bin}-${bin + binSize - 1}` : 
-    `${bin}+`
-  );
-  
-  // Check if dark mode is active
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  const textColor = isDarkMode ? '#e1e1e1' : '#333';
-  
-  // Create the chart
-  window.resultsChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Distribution of Pulls Needed',
-        data: percentages,
-        backgroundColor: 'rgba(102, 126, 234, 0.6)',
-        borderColor: 'rgba(102, 126, 234, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: {
-          display: true,
-          text: 'Distribution of Pulls Needed for Success',
-          color: textColor,
-          font: {
-            size: 16
-          }
-        },
-        legend: {
-          display: false
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.raw.toFixed(1)}% of successful attempts`;
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { color: textColor },
-          title: {
-            display: true,
-            text: 'Percentage of Successful Attempts',
-            color: textColor
-          }
-        },
-        x: {
-          ticks: { color: textColor },
-          title: {
-            display: true,
-            text: 'Number of Pulls',
-            color: textColor
-          }
-        }
-      }
-    }
-  });
-}
+// This function is replaced by the enhanced version above
 
 function saveConfiguration() {
   const config = {
@@ -881,6 +926,7 @@ function saveConfiguration() {
     constellations: document.getElementById('constellations').value,
     charPity: document.getElementById('charPity').value,
     charGuaranteed: document.getElementById('charGuaranteed').value,
+    capturingRadiance: document.getElementById('capturingRadiance').value,
     wantWeapon: document.getElementById('wantWeapon').checked,
     refinements: document.getElementById('refinements').value,
     weapPity: document.getElementById('weapPity').value,
@@ -1055,6 +1101,7 @@ function saveConfiguration() {
     constellations: document.getElementById('constellations').value,
     charPity: document.getElementById('charPity').value,
     charGuaranteed: document.getElementById('charGuaranteed').value,
+    capturingRadiance: document.getElementById('capturingRadiance').value,
     wantWeapon: document.getElementById('wantWeapon').checked,
     refinements: document.getElementById('refinements').value,
     weapPity: document.getElementById('weapPity').value,
@@ -1065,19 +1112,23 @@ function saveConfiguration() {
   };
   
   // Save to general storage for backward compatibility
-  localStorage.setItem('genshinWishConfig', JSON.stringify(config));
-  
-  // Save to user-specific storage
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
-    if (users[currentUser]) {
-      users[currentUser].config = config;
-      localStorage.setItem('genshinUsers', JSON.stringify(users));
+  try {
+    localStorage.setItem('genshinWishConfig', JSON.stringify(config));
+    
+    // Save to user-specific storage
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
+      if (users[currentUser]) {
+        users[currentUser].config = config;
+        localStorage.setItem('genshinUsers', JSON.stringify(users));
+      }
     }
+    
+    alert('Configuration saved successfully!');
+  } catch (error) {
+    alert('Error saving configuration: ' + error.message + '. This might be due to storage quota limitations.');
   }
-  
-  alert('Configuration saved successfully!');
 }
 
 function loadConfiguration() {
@@ -1098,7 +1149,12 @@ function loadConfiguration() {
       alert('No saved configuration found.');
       return;
     }
-    config = JSON.parse(savedConfig);
+    try {
+      config = JSON.parse(savedConfig);
+    } catch (error) {
+      alert('Error loading configuration: Invalid data format.');
+      return;
+    }
   }
   
   loadUserConfiguration(config);
@@ -1116,6 +1172,7 @@ function loadUserConfiguration(config) {
   document.getElementById('constellations').value = config.constellations || 0;
   document.getElementById('charPity').value = config.charPity || 0;
   document.getElementById('charGuaranteed').value = config.charGuaranteed || 'false';
+  document.getElementById('capturingRadiance').value = config.capturingRadiance || 'true';
   
   document.getElementById('wantWeapon').checked = config.wantWeapon;
   document.getElementById('refinements').value = config.refinements || 0;
@@ -1130,6 +1187,259 @@ function loadUserConfiguration(config) {
   toggleCharacterInputs();
   toggleWeaponInputs();
   updateResourceSummary();
+}
+
+// Enhanced input validation and utilities
+function validateAndUpdateResources(input) {
+  let value = parseFloat(input.value) || 0;
+  const min = parseFloat(input.min) || 0;
+  const max = parseFloat(input.max) || Infinity;
+  
+  // Clamp value to min/max
+  value = Math.max(min, Math.min(max, Math.floor(value)));
+  input.value = value;
+  
+  updateResourceSummary();
+}
+
+function handleEnterKey(event, callback) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    callback();
+  }
+}
+
+function formatNumber(num) {
+  return num.toLocaleString();
+}
+
+// Export/Import functionality
+function exportConfiguration() {
+  const config = {
+    primos: document.getElementById('primos').value,
+    fates: document.getElementById('fates').value,
+    genesis: document.getElementById('genesis').value,
+    stardust: document.getElementById('stardust').value,
+    wantCharacter: document.getElementById('wantCharacter').checked,
+    constellations: document.getElementById('constellations').value,
+    charPity: document.getElementById('charPity').value,
+    charGuaranteed: document.getElementById('charGuaranteed').value,
+    capturingRadiance: document.getElementById('capturingRadiance').value,
+    wantWeapon: document.getElementById('wantWeapon').checked,
+    refinements: document.getElementById('refinements').value,
+    weapPity: document.getElementById('weapPity').value,
+    weapGuaranteed: document.getElementById('weapGuaranteed').value,
+    fatepoints: document.getElementById('fatepoints').value,
+    simulations: document.getElementById('simulations').value,
+    luckMode: document.getElementById('luckMode').value,
+    exportDate: new Date().toISOString()
+  };
+  
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `genshin-calculator-config-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importConfiguration(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const config = JSON.parse(e.target.result);
+      loadUserConfiguration(config);
+      alert('Configuration imported successfully!');
+    } catch (error) {
+      alert('Error importing configuration: Invalid file format.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+let lastSimulationResults = null;
+
+function exportResults() {
+  if (!lastSimulationResults) {
+    alert('No simulation results to export. Please run a calculation first.');
+    return;
+  }
+  
+  const csvContent = generateCSV(lastSimulationResults);
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `genshin-simulation-results-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function generateCSV(results) {
+  const headers = ['Simulation', 'Success', 'Total_Pulls', 'Character_Success', 'Weapon_Success', 'Characters_Obtained', 'Weapons_Obtained'];
+  let csv = headers.join(',') + '\n';
+  
+  results.results.forEach((result, index) => {
+    const row = [
+      index + 1,
+      result.success ? 'Yes' : 'No',
+      result.totalPullsUsed,
+      result.charSuccess ? 'Yes' : 'No',
+      result.weapSuccess ? 'Yes' : 'No',
+      result.charObtained,
+      result.weapObtained
+    ];
+    csv += row.join(',') + '\n';
+  });
+  
+  return csv;
+}
+
+// Enhanced chart creation with error handling
+function createChart(simResults) {
+  try {
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+      console.error('Chart.js not loaded');
+      return;
+    }
+    
+    const canvas = document.getElementById('resultsChart');
+    if (!canvas) {
+      console.error('Chart canvas not found');
+      return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('Canvas context not available');
+      return;
+    }
+    
+    // Store results for export
+    lastSimulationResults = simResults;
+    document.getElementById('exportResultsBtn').disabled = false;
+    
+    // Destroy existing chart if it exists
+    if (window.resultsChartInstance) {
+      window.resultsChartInstance.destroy();
+    }
+    
+    // Create histogram data from simulation results
+    const pullsData = simResults.results.filter(r => r.success).map(r => r.totalPullsUsed);
+    
+    if (pullsData.length === 0) {
+      console.log('No successful pulls to chart');
+      return;
+    }
+    
+    if (pullsData.length < 2) {
+      console.log('Insufficient data for histogram');
+      return;
+    }
+    
+    // Find min and max for binning
+    const min = Math.min(...pullsData);
+    const max = Math.max(...pullsData);
+    
+    if (min === max) {
+      console.log('All data points are identical, cannot create histogram');
+      return;
+    }
+    
+    // Create bins (10 bins between min and max)
+    const binSize = Math.ceil((max - min) / 10) || 1;
+    const bins = Array.from({length: 10}, (_, i) => min + i * binSize);
+    
+    // Count pulls in each bin
+    const counts = Array(bins.length).fill(0);
+    pullsData.forEach(pulls => {
+      const binIndex = Math.min(Math.floor((pulls - min) / binSize), bins.length - 1);
+      counts[binIndex]++;
+    });
+    
+    // Convert counts to percentages
+    const percentages = counts.map(count => (count / pullsData.length) * 100);
+    
+    // Create labels for x-axis
+    const labels = bins.map((bin, i) => 
+      i < bins.length - 1 ? 
+      `${bin}-${bin + binSize - 1}` : 
+      `${bin}+`
+    );
+    
+    // Check if dark mode is active
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const textColor = isDarkMode ? '#e1e1e1' : '#333';
+    
+    // Create the chart
+    window.resultsChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Distribution of Pulls Needed',
+          data: percentages,
+          backgroundColor: 'rgba(102, 126, 234, 0.6)',
+          borderColor: 'rgba(102, 126, 234, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Distribution of Pulls Needed for Success',
+            color: textColor,
+            font: {
+              size: 16
+            }
+          },
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.raw.toFixed(1)}% of successful attempts`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: textColor },
+            title: {
+              display: true,
+              text: 'Percentage of Successful Attempts',
+              color: textColor
+            }
+          },
+          x: {
+            ticks: { color: textColor },
+            title: {
+              display: true,
+              text: 'Number of Pulls',
+              color: textColor
+            }
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error creating chart:', error);
+  }
 }
 
 // Initialize the app when the page loads
@@ -1150,6 +1460,17 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     showLogin();
   }
+  
+  // Add keyboard shortcuts
+  document.addEventListener('keydown', function(event) {
+    // Ctrl+Enter to calculate
+    if (event.ctrlKey && event.key === 'Enter') {
+      event.preventDefault();
+      if (document.getElementById('mainContainer').style.display !== 'none') {
+        calculate();
+      }
+    }
+  });
 });
 </script>
 </body>
