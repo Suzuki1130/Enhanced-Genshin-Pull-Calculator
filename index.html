@@ -305,62 +305,8 @@
   </style>
 </head>
 <body>
-  <div id="loginContainer" style="display: none;" class="container">
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-      <img src="Enhanced_Genshin_Pull_Calculator.png" alt="Enhanced Genshin Pull Calculator Logo" style="height: 80px; margin-right: 15px;">
-      <h1 style="margin: 0;">Enhanced Genshin Pull Calculator</h1>
-    </div>
-    <div class="section">
-      <h3>Login</h3>
-      <div class="input-group">
-        <div>
-          <label for="username">Username:</label>
-          <input type="text" id="username" placeholder="Enter your username" onkeypress="handleEnterKey(event, login)">
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" placeholder="Enter your password" onkeypress="handleEnterKey(event, login)">
-        </div>
-      </div>
-      <button onclick="login()" style="margin-top: 20px;">Login</button>
-      <p style="text-align: center; margin-top: 15px;">Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
-      <div style="margin-top: 20px; padding: 10px; background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; font-size: 0.9em;">
-        <p style="margin: 0;"><strong>Note:</strong> This login system uses your browser's local storage. Your account and saved configurations are only available on this device and browser.</p>
-      </div>
-    </div>
-  </div>
-  
-  <div id="registerContainer" style="display: none;" class="container">
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-      <img src="Enhanced_Genshin_Pull_Calculator.png" alt="Enhanced Genshin Pull Calculator Logo" style="height: 80px; margin-right: 15px;">
-      <h1 style="margin: 0;">Enhanced Genshin Pull Calculator</h1>
-    </div>
-    <div class="section">
-      <h3>Register</h3>
-      <div class="input-group">
-        <div>
-          <label for="newUsername">Username:</label>
-          <input type="text" id="newUsername" placeholder="Choose a username" onkeypress="handleEnterKey(event, register)">
-        </div>
-        <div>
-          <label for="newPassword">Password:</label>
-          <input type="password" id="newPassword" placeholder="Choose a password" onkeypress="handleEnterKey(event, register)">
-        </div>
-        <div>
-          <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm your password" onkeypress="handleEnterKey(event, register)">
-        </div>
-      </div>
-      <button onclick="register()" style="margin-top: 20px;">Register</button>
-      <p style="text-align: center; margin-top: 15px;">Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-      <div style="margin-top: 20px; padding: 10px; background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; font-size: 0.9em;">
-        <p style="margin: 0;"><strong>Note:</strong> This login system uses your browser's local storage. Your account and saved configurations are only available on this device and browser.</p>
-      </div>
-    </div>
-  </div>
-  
-  <div id="mainContainer" style="display: none;" class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <div id="mainContainer" class="container">
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
       <div class="theme-switch">
         <span class="theme-icon">☀️</span>
         <label class="theme-switch-toggle">
@@ -368,11 +314,6 @@
           <span class="slider"></span>
         </label>
         <span class="theme-icon">🌙</span>
-      </div>
-      
-      <div id="accountSection" style="display: flex; align-items: center;">
-        <span style="margin-right: 10px; color: var(--text-color);">Logged in as: <span id="userDisplay"></span></span>
-        <button onclick="logout()" style="margin: 0; width: auto; padding: 8px 15px;">Logout</button>
       </div>
     </div>
     
@@ -579,13 +520,6 @@
 
   </div>
 <script>
-// Display username in account section
-function updateUserDisplay() {
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    document.getElementById('userDisplay').textContent = currentUser;
-  }
-}
 class GenshinCalculator {
   constructor() {
     this.baseRates = {
@@ -1013,192 +947,6 @@ function updateChartTheme(isDarkMode) {
   window.resultsChartInstance.update();
 }
 
-// User authentication functions
-function login() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  
-  if (!username || !password) {
-    alert('Please enter both username and password');
-    return;
-  }
-  
-  const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
-  
-  if (users[username] && users[username].password === password) {
-    // Login successful
-    localStorage.setItem('currentUser', username);
-    showMainApp();
-    
-    // Load user-specific configuration if available
-    const userConfig = users[username].config;
-    if (userConfig) {
-      loadUserConfiguration(userConfig);
-    }
-  } else {
-    alert('Invalid username or password');
-  }
-}
-
-function register() {
-  const username = document.getElementById('newUsername').value;
-  const password = document.getElementById('newPassword').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
-  
-  if (!username || !password || !confirmPassword) {
-    alert('Please fill in all fields');
-    return;
-  }
-  
-  if (password !== confirmPassword) {
-    alert('Passwords do not match');
-    return;
-  }
-  
-  const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
-  
-  if (users[username]) {
-    alert('Username already exists');
-    return;
-  }
-  
-  // Create new user
-  users[username] = {
-    password: password,
-    config: null
-  };
-  
-  localStorage.setItem('genshinUsers', JSON.stringify(users));
-  localStorage.setItem('currentUser', username);
-  
-  alert('Registration successful!');
-  showMainApp();
-}
-
-function logout() {
-  localStorage.removeItem('currentUser');
-  showLogin();
-}
-
-function showLogin() {
-  document.getElementById('loginContainer').style.display = 'block';
-  document.getElementById('registerContainer').style.display = 'none';
-  document.getElementById('mainContainer').style.display = 'none';
-}
-
-function showRegister() {
-  document.getElementById('loginContainer').style.display = 'none';
-  document.getElementById('registerContainer').style.display = 'block';
-  document.getElementById('mainContainer').style.display = 'none';
-}
-
-function showMainApp() {
-  document.getElementById('loginContainer').style.display = 'none';
-  document.getElementById('registerContainer').style.display = 'none';
-  document.getElementById('mainContainer').style.display = 'block';
-  updateUserDisplay();
-}
-
-// Modified save/load configuration to be user-specific
-function saveConfiguration() {
-  const config = {
-    primos: document.getElementById('primos').value,
-    fates: document.getElementById('fates').value,
-    genesis: document.getElementById('genesis').value,
-    stardust: document.getElementById('stardust').value,
-    starglitter: document.getElementById('starglitter').value,
-    wantCharacter: document.getElementById('wantCharacter').checked,
-    constellations: document.getElementById('constellations').value,
-    charPity: document.getElementById('charPity').value,
-    charGuaranteed: document.getElementById('charGuaranteed').value,
-    capturingRadiance: document.getElementById('capturingRadiance').value,
-    wantWeapon: document.getElementById('wantWeapon').checked,
-    refinements: document.getElementById('refinements').value,
-    weapPity: document.getElementById('weapPity').value,
-    weapGuaranteed: document.getElementById('weapGuaranteed').value,
-    fatepoints: document.getElementById('fatepoints').value,
-    simulations: document.getElementById('simulations').value,
-    luckMode: document.getElementById('luckMode').value
-  };
-  
-  // Save to general storage for backward compatibility
-  try {
-    localStorage.setItem('genshinWishConfig', JSON.stringify(config));
-    
-    // Save to user-specific storage
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-      const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
-      if (users[currentUser]) {
-        users[currentUser].config = config;
-        localStorage.setItem('genshinUsers', JSON.stringify(users));
-      }
-    }
-    
-    alert('Configuration saved successfully!');
-  } catch (error) {
-    alert('Error saving configuration: ' + error.message + '. This might be due to storage quota limitations.');
-  }
-}
-
-function loadConfiguration() {
-  const currentUser = localStorage.getItem('currentUser');
-  let config;
-  
-  if (currentUser) {
-    const users = JSON.parse(localStorage.getItem('genshinUsers') || '{}');
-    if (users[currentUser] && users[currentUser].config) {
-      config = users[currentUser].config;
-    }
-  }
-  
-  // Fall back to general storage if no user-specific config
-  if (!config) {
-    const savedConfig = localStorage.getItem('genshinWishConfig');
-    if (!savedConfig) {
-      alert('No saved configuration found.');
-      return;
-    }
-    try {
-      config = JSON.parse(savedConfig);
-    } catch (error) {
-      alert('Error loading configuration: Invalid data format.');
-      return;
-    }
-  }
-  
-  loadUserConfiguration(config);
-  alert('Configuration loaded successfully!');
-}
-
-function loadUserConfiguration(config) {
-  // Load values into form
-  document.getElementById('primos').value = config.primos || 0;
-  document.getElementById('fates').value = config.fates || 0;
-  document.getElementById('genesis').value = config.genesis || 0;
-  document.getElementById('stardust').value = config.stardust || 0;
-  document.getElementById('starglitter').value = config.starglitter || 0;
-  
-  document.getElementById('wantCharacter').checked = config.wantCharacter;
-  document.getElementById('constellations').value = config.constellations || 0;
-  document.getElementById('charPity').value = config.charPity || 0;
-  document.getElementById('charGuaranteed').value = config.charGuaranteed || 'false';
-  document.getElementById('capturingRadiance').value = config.capturingRadiance || 'true';
-  
-  document.getElementById('wantWeapon').checked = config.wantWeapon;
-  document.getElementById('refinements').value = config.refinements || 0;
-  document.getElementById('weapPity').value = config.weapPity || 0;
-  document.getElementById('weapGuaranteed').value = config.weapGuaranteed || 'false';
-  document.getElementById('fatepoints').value = config.fatepoints || 0;
-  
-  document.getElementById('simulations').value = config.simulations || 10000;
-  document.getElementById('luckMode').value = config.luckMode || 'both';
-  
-  // Update UI based on loaded values
-  toggleCharacterInputs();
-  toggleWeaponInputs();
-  updateResourceSummary();
-}
 
 // Enhanced input validation and utilities
 function validateAndUpdateResources(input) {
@@ -1266,7 +1014,34 @@ function importConfiguration(event) {
   reader.onload = function(e) {
     try {
       const config = JSON.parse(e.target.result);
-      loadUserConfiguration(config);
+      
+      // Load values into form (same as loadConfiguration)
+      document.getElementById('primos').value = config.primos || 0;
+      document.getElementById('fates').value = config.fates || 0;
+      document.getElementById('genesis').value = config.genesis || 0;
+      document.getElementById('stardust').value = config.stardust || 0;
+      document.getElementById('starglitter').value = config.starglitter || 0;
+      
+      document.getElementById('wantCharacter').checked = config.wantCharacter;
+      document.getElementById('constellations').value = config.constellations || 0;
+      document.getElementById('charPity').value = config.charPity || 0;
+      document.getElementById('charGuaranteed').value = config.charGuaranteed || 'false';
+      document.getElementById('capturingRadiance').value = config.capturingRadiance || 'true';
+      
+      document.getElementById('wantWeapon').checked = config.wantWeapon;
+      document.getElementById('refinements').value = config.refinements || 0;
+      document.getElementById('weapPity').value = config.weapPity || 0;
+      document.getElementById('weapGuaranteed').value = config.weapGuaranteed || 'false';
+      document.getElementById('fatepoints').value = config.fatepoints || 0;
+      
+      document.getElementById('simulations').value = config.simulations || 10000;
+      document.getElementById('luckMode').value = config.luckMode || 'both';
+      
+      // Update UI based on loaded values
+      toggleCharacterInputs();
+      toggleWeaponInputs();
+      updateResourceSummary();
+      
       alert('Configuration imported successfully!');
     } catch (error) {
       alert('Error importing configuration: Invalid file format.');
@@ -1465,22 +1240,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('themeSwitch').checked = true;
   }
   
-  // Check if user is logged in
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    showMainApp();
-  } else {
-    showLogin();
-  }
-  
   // Add keyboard shortcuts
   document.addEventListener('keydown', function(event) {
     // Ctrl+Enter to calculate
     if (event.ctrlKey && event.key === 'Enter') {
       event.preventDefault();
-      if (document.getElementById('mainContainer').style.display !== 'none') {
-        calculate();
-      }
+      calculate();
     }
   });
 });
