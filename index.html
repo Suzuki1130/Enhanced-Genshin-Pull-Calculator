@@ -994,6 +994,28 @@
       </div>
     </div>
     
+    <div class="section">
+      <h3>Save/Load Configuration</h3>
+      <div class="input-group">
+        <div>
+          <button onclick="saveConfiguration()" style="margin-top: 0;">Save Current Configuration</button>
+        </div>
+        <div>
+          <button onclick="loadConfiguration()" style="margin-top: 0;">Load Saved Configuration</button>
+        </div>
+        <div>
+          <button onclick="exportConfiguration()" style="margin-top: 0;">Export Configuration</button>
+        </div>
+        <div>
+          <button onclick="document.getElementById('importFile').click()" style="margin-top: 0;">Import Configuration</button>
+          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importConfiguration(event)">
+        </div>
+        <div>
+          <button onclick="exportResults()" style="margin-top: 0;" id="exportResultsBtn" disabled>Export Results (CSV)</button>
+        </div>
+      </div>
+    </div>
+    
     
     <!-- Changelog Modal -->
     <div id="changelogModal" class="modal">
@@ -1040,7 +1062,22 @@
               <li>💰 Enhanced resource calculation with multiple currency types</li>
               <li>⚙️ Added save/load configuration functionality</li>
             </ul>
-  </div>
+          </div>
+        </div>
+        
+        <div class="changelog-item">
+          <div class="changelog-version">Version 5.5</div>
+          <div class="changelog-date">May 2025</div>
+          <div class="changelog-changes">
+            <ul>
+              <li>🏹 Initial weapon banner support with Epitomized Path</li>
+              <li>🎯 Added soft pity calculations for character and weapon banners</li>
+              <li>📱 Basic responsive design implementation</li>
+              <li>🎨 Modern UI with gradient backgrounds and animations</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Blog Page -->
@@ -1396,45 +1433,6 @@ const additionalStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = additionalStyles;
 document.head.appendChild(styleSheet);
-        <div class="changelog-item">
-          <div class="changelog-version">Version 5.5</div>
-          <div class="changelog-date">May 2025</div>
-          <div class="changelog-changes">
-            <ul>
-              <li>🏹 Initial weapon banner support with Epitomized Path</li>
-              <li>🎯 Added soft pity calculations for character and weapon banners</li>
-              <li>📱 Basic responsive design implementation</li>
-              <li>🎨 Modern UI with gradient backgrounds and animations</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="section">
-      <h3>Save/Load Configuration</h3>
-      <div class="input-group">
-        <div>
-          <button onclick="saveConfiguration()" style="margin-top: 0;">Save Current Configuration</button>
-        </div>
-        <div>
-          <button onclick="loadConfiguration()" style="margin-top: 0;">Load Saved Configuration</button>
-        </div>
-        <div>
-          <button onclick="exportConfiguration()" style="margin-top: 0;">Export Configuration</button>
-        </div>
-        <div>
-          <button onclick="document.getElementById('importFile').click()" style="margin-top: 0;">Import Configuration</button>
-          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importConfiguration(event)">
-        </div>
-        <div>
-          <button onclick="exportResults()" style="margin-top: 0;" id="exportResultsBtn" disabled>Export Results (CSV)</button>
-        </div>
-      </div>
-    </div>
-    
-
-  </div>
 <script>
 class GenshinCalculator {
   constructor() {
