@@ -395,13 +395,15 @@
     .modal {
       display: none;
       position: fixed;
-      z-index: 2000;
+      z-index: 3000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     
     .modal-content {
@@ -453,10 +455,16 @@
     .changelog-changes {
       font-size: 14px;
       line-height: 1.4;
+      color: var(--text-color);
     }
     
     .changelog-changes li {
       margin-bottom: 3px;
+      color: var(--text-color);
+    }
+    
+    .changelog-changes ul {
+      color: var(--text-color);
     }
     
     @media (max-width: 768px) {
@@ -586,6 +594,8 @@
       margin-left: 0;
       transition: margin-left 0.3s ease;
       min-height: 100vh;
+      position: relative;
+      z-index: 1;
     }
     
     /* Desktop styles */
@@ -606,55 +616,142 @@
     /* Page content containers */
     .page-content {
       display: none;
+      padding: 20px;
+      min-height: calc(100vh - 40px);
+      background: transparent;
+      margin: 0;
     }
     
     .page-content.active {
-      display: block;
+      display: block !important;
     }
+    
     
     /* Home page specific styles */
     .hero-section {
       text-align: center;
-      padding: 60px 0;
-      background: var(--results-gradient);
-      color: white;
-      border-radius: 15px;
+      padding: 40px 0;
+      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.08) 50%, rgba(118, 75, 162, 0.08) 100%);
+      color: var(--text-color);
+      border-radius: 12px;
       margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+      animation: gentle-pulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes gentle-pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
     }
     
     .hero-section h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-      color: white;
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      color: var(--text-color);
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     
     .hero-section p {
-      font-size: 1.2em;
-      opacity: 0.9;
+      font-size: 1.1em;
+      color: var(--label-color);
+      max-width: 600px;
+      margin: 0 auto;
     }
     
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       margin-top: 30px;
     }
     
     .feature-card {
-      background: var(--section-bg);
-      padding: 30px;
+      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.05) 100%);
+      padding: 25px;
       border-radius: 12px;
       text-align: center;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.08);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
     
     .feature-card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.08) 100%);
+    }
+    
+    .feature-card:hover::before {
+      opacity: 1;
     }
     
     .feature-icon {
-      font-size: 3em;
+      font-size: 2.5em;
       margin-bottom: 15px;
+      filter: grayscale(0.3);
+    }
+    
+    .feature-card h3 {
+      color: var(--text-color);
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    
+    .feature-card p {
+      color: var(--label-color);
+      font-size: 0.95em;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .feature-card button {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: auto;
+      margin-top: 0;
+    }
+    
+    .feature-card button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
     
   /* Blog page styles */
@@ -682,12 +779,27 @@
     border-radius: 2px;
   }
   
-  .operator-profile {
-    background: var(--section-bg);
+  .operator-profile,
+  .creator-profile {
+    background: linear-gradient(135deg, var(--section-bg) 0%, rgba(168, 85, 247, 0.05) 100%);
     border-radius: 12px;
     margin-bottom: 40px;
     border-left: 4px solid #a855f7;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .creator-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.1));
+    border-radius: 50%;
+    transform: translate(30px, -30px);
   }
   
   .profile-header {
@@ -923,7 +1035,6 @@
     <ul class="nav-menu">
       <li class="nav-item"><a href="#home" class="nav-link active" data-page="home"><i class="fas fa-home"></i> <span class="i18n" data-key="home">Home</span></a></li>
       <li class="nav-item"><a href="#calculator" class="nav-link" data-page="calculator"><i class="fas fa-calculator"></i> <span class="i18n" data-key="calculator">Calculator</span></a></li>
-      <li class="nav-item"><a href="#blog" class="nav-link" data-page="blog"><i class="fas fa-blog"></i> <span class="i18n" data-key="blog">Blog</span></a></li>
     </ul>
     <div class="language-selector">
         <select id="languageSelector" onchange="changeLanguage(this.value)">
@@ -937,6 +1048,7 @@
 
   <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 
+
   <div class="main-content">
     <!-- Home Page -->
     <div id="homePage" class="page-content active">
@@ -946,6 +1058,36 @@
           <p class="i18n" data-key="welcomeSubtitle">Your ultimate destination for Genshin Impact calculations, insights, and resources</p>
         </div>
         
+        <!-- Creator's Profile -->
+        <div class="creator-profile">
+          <div class="profile-header">
+            <i class="fas fa-user-circle" style="margin-right: 10px;"></i>
+            <h3>Creator's Profile</h3>
+          </div>
+          <div class="profile-content">
+            <div class="profile-item">
+              <span class="profile-label">Name:</span>
+              <span class="profile-value">Harry</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Playing Since:</span>
+              <span class="profile-value">Version 1.6</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Favorite Character:</span>
+              <span class="profile-value">Columbina (Damselette)</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Current Goal:</span>
+              <span class="profile-value">Saving Pulls For Columbina</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Location:</span>
+              <span class="profile-value">I'm a Student Living In Japan</span>
+            </div>
+          </div>
+        </div>
+        
         <div class="feature-grid">
           <div class="feature-card">
             <div class="feature-icon">📊</div>
@@ -953,14 +1095,6 @@
             <p class="i18n" data-key="calculatorDesc">Advanced probability calculations with Radiance Pity support and Monte Carlo simulations</p>
             <button onclick="showPage('calculator')" class="i18n" data-key="tryCalculator">Try Calculator</button>
           </div>
-          
-          <div class="feature-card">
-            <div class="feature-icon">📝</div>
-            <h3 class="i18n" data-key="blogTitle">Blog & Insights</h3>
-            <p class="i18n" data-key="blogDesc">Tips, guides, and analysis of Genshin Impact mechanics and meta</p>
-            <button onclick="showPage('blog')" class="i18n" data-key="readBlog">Read Blog</button>
-          </div>
-          
         </div>
       </div>
     </div>
@@ -989,7 +1123,7 @@
         Made by Harry
       </div>
       <div class="version-info" style="text-align: center; font-size: 0.8em; margin-bottom: 20px; color: var(--credits-color);">
-        <a href="#" class="version-link" onclick="openChangelogModal()">Version 5.8</a>
+        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;">Version 5.8</a>
       </div>
 
     <div class="section">
@@ -1277,150 +1411,209 @@
       </div>
     </div>
 
-    <!-- Blog Page -->
-    <div id="blogPage" class="page-content">
+    <!-- Blog/Changelog Page -->
+    <div id="changelogPage" class="page-content">
       <div class="container">
         <div class="blog-header">
-          <h1>Blog Articles</h1>
+          <h1>📝 Changelog & Updates</h1>
           <div class="blog-divider"></div>
         </div>
         
-        <!-- Operator Profile -->
+        <!-- Author Profile -->
         <div class="operator-profile">
           <div class="profile-header">
-            <i class="fas fa-user" style="margin-right: 8px;"></i>
-            <h3>Operator Profile</h3>
+            <i class="fas fa-user-circle" style="margin-right: 10px;"></i>
+            <h3>About Harry</h3>
           </div>
-          
           <div class="profile-content">
             <div class="profile-item">
-              <span class="profile-label">Name:</span>
-              <span class="profile-value">🎯 Harry</span>
+              <span class="profile-label">Role:</span>
+              <span class="profile-value">Developer & Genshin Impact Enthusiast</span>
             </div>
-            
             <div class="profile-item">
-              <span class="profile-label">Playing Since:</span>
-              <span class="profile-value">🗓️ Launch Day (September 28, 2020)</span>
+              <span class="profile-label">Specialties:</span>
+              <span class="profile-value">Probability Theory, Game Mechanics Analysis, Web Development</span>
             </div>
-            
             <div class="profile-item">
-              <span class="profile-label">Spending Status:</span>
-              <span class="profile-value">💳 Former whale, now Welkin + BP only (3 years)</span>
-            </div>
-            
-            <div class="profile-item">
-              <span class="profile-label">Favorite Characters:</span>
-              <span class="profile-value">❤️ Zhongli (C2), Raiden Shogun (C3), Kazuha (C1)</span>
-              <div class="profile-note">
-                <i class="fas fa-info-circle"></i>
-                <em>Achieved C2+ for all by strategic saving and calculated pulls</em>
-              </div>
-            </div>
-            
-            <div class="profile-item">
-              <span class="profile-label">Spiral Abyss:</span>
-              <span class="profile-value">⭐ Consistently 36-stars since Floor 12 release</span>
-            </div>
-            
-            <div class="profile-item">
-              <span class="profile-label">Specialty:</span>
-              <span class="profile-value">📊 Probability theory, optimization strategies, F2P guidance</span>
+              <span class="profile-label">Bio:</span>
+              <span class="profile-value">
+                Passionate Genshin Impact player and developer with a love for mathematics and probability theory. 
+                I created this calculator to help fellow Travelers make informed decisions about their wish strategies.
+                <div class="profile-note">
+                  <i class="fas fa-lightbulb"></i>
+                  When I'm not coding, you can find me exploring Teyvat and theorycrafting optimal team compositions.
+                </div>
+              </span>
             </div>
           </div>
         </div>
         
-        <!-- Blog Articles -->
+        <!-- Changelog Entries -->
         <div class="blog-posts">
-          <article class="blog-article">
-            <h4>Is Neuvillette Worth Pulling? A Meta Analysis Comparing Hydro DPS Options</h4>
+          <div class="blog-article">
+            <div class="featured-badge">Latest</div>
+            <h4>Version 5.8 - Enhanced Features & UI</h4>
             <div class="article-meta">
-              <span class="article-date">📅 December 15, 2024</span>
-              <span class="article-author">✍️ Harry</span>
+              <div class="article-date">
+                <i class="fas fa-calendar"></i>
+                January 15, 2025
+              </div>
+              <div class="article-author">
+                <i class="fas fa-user"></i>
+                Harry
+              </div>
             </div>
-            <p class="article-summary">A comprehensive review of Neuvillette's place in the current meta. An experienced player compares his performance and value with other Hydro DPS options like Ayato, Childe, and Kokomi, offering analysis on whether to pull and discussing future potential in team compositions.</p>
+            <div class="article-summary">
+              A comprehensive breakdown of the latest features added to our pull calculator, including enhanced Radiance Pity mechanics and improved Monte Carlo simulations.
+            </div>
             <div class="article-tags">
-              <span class="tag">Meta Analysis</span>
-              <span class="tag">Hydro DPS</span>
-              <span class="tag">Pull Guide</span>
-            </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
-          
-          <article class="blog-article">
-            <h4>Beginner's Guide to Genshin "Epitome Invocation" Weapon Banner - 2025 Latest Rates, Pity & Fate Points</h4>
-            <div class="article-meta">
-              <span class="article-date">📅 December 1, 2024</span>
-              <span class="article-author">✍️ Harry</span>
-            </div>
-            <p class="article-summary">Everything you need to know about the weapon banner in 2024. Understanding pity mechanics, fate point system, and whether weapons are worth your primogems. Includes updated rates and statistical analysis of expected costs.</p>
-            <div class="article-tags">
-              <span class="tag">Beginner Guide</span>
-              <span class="tag">Weapon Banner</span>
-              <span class="tag">Pity System</span>
-            </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
-          
-          <article class="blog-article">
-            <h4>Understanding Radiance Pity: The v5.0 Update That Changed Everything</h4>
-            <div class="article-meta">
-              <span class="article-date">📅 November 20, 2024</span>
-              <span class="article-author">✍️ Harry</span>
-            </div>
-            <p class="article-summary">The Radiance Pity system introduced in version 5.0 fundamentally changed how 50/50 mechanics work. Learn the math behind the improved rates, when it activates, and how it affects your pulling strategy for maximum efficiency.</p>
-            <div class="article-tags">
-              <span class="tag">Game Mechanics</span>
+              <span class="tag">Updates</span>
+              <span class="tag">Calculator</span>
+              <span class="tag">Features</span>
               <span class="tag">Radiance Pity</span>
-              <span class="tag">Mathematics</span>
             </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
+            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
+              <ul style="margin: 0; color: var(--text-color);">
+                <li>✨ Added rich tooltips with detailed explanations for key mechanics</li>
+                <li>🎨 Enhanced dark mode with better theme persistence</li>
+                <li>📱 Improved mobile responsiveness and layout</li>
+                <li>💾 Added automatic input persistence using localStorage</li>
+                <li>📊 Enhanced probability charts with better visualization</li>
+                <li>🔄 Added version tracking and changelog modal</li>
+                <li>🔧 Fixed duplicate mechanics: removed outdated Capturing Radiance, kept unified Radiance Pity system</li>
+              </ul>
+            </div>
+          </div>
           
-          <article class="blog-article">
-            <h4>Monte Carlo Simulations in Gacha Games: Why RNG Isn't Really Random</h4>
+          <div class="blog-article">
+            <h4>Version 5.7 - Radiance Pity System</h4>
             <div class="article-meta">
-              <span class="article-date">📅 November 5, 2024</span>
-              <span class="article-author">✍️ Harry</span>
+              <div class="article-date">
+                <i class="fas fa-calendar"></i>
+                December 28, 2024
+              </div>
+              <div class="article-author">
+                <i class="fas fa-user"></i>
+                Harry
+              </div>
             </div>
-            <p class="article-summary">Dive deep into the statistical methods behind accurate probability calculations. Learn how Monte Carlo simulations work, why they're more accurate than simple math, and how this calculator uses 100,000+ simulations to predict your real pulling outcomes.</p>
+            <div class="article-summary">
+              Added comprehensive support for the Radiance Pity system introduced in Genshin Impact 5.0, with improved simulation accuracy.
+            </div>
             <div class="article-tags">
-              <span class="tag">Statistics</span>
-              <span class="tag">Programming</span>
-              <span class="tag">Game Theory</span>
+              <span class="tag">Updates</span>
+              <span class="tag">Radiance Pity</span>
+              <span class="tag">Monte Carlo</span>
             </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
+            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
+              <ul style="margin: 0; color: var(--text-color);">
+                <li>🎯 Added Radiance Pity system for v5.0+ mechanics</li>
+                <li>⚡ Improved Monte Carlo simulation performance</li>
+                <li>📊 Enhanced chart rendering with better error handling</li>
+                <li>🔧 Bug fixes for edge cases in probability calculations</li>
+              </ul>
+            </div>
+          </div>
           
-          <article class="blog-article">
-            <h4>The F2P Player's Complete Primogem Management Guide - 2024 Edition</h4>
+          <div class="blog-article">
+            <h4>Strategic Wishing Guide</h4>
             <div class="article-meta">
-              <span class="article-date">📅 October 28, 2024</span>
-              <span class="article-author">✍️ Harry</span>
+              <div class="article-date">
+                <i class="fas fa-calendar"></i>
+                December 15, 2024
+              </div>
+              <div class="article-author">
+                <i class="fas fa-user"></i>
+                Harry
+              </div>
             </div>
-            <p class="article-summary">Master the art of primogem efficiency as a free-to-play player. Comprehensive strategies for resource planning, banner prioritization, and long-term account progression. Includes a monthly primogem income breakdown and saving schedules for guaranteed characters.</p>
+            <div class="article-summary">
+              Learn how to approach wish planning from a mathematical perspective, optimizing your pulls for maximum value whether you're F2P or spending.
+            </div>
             <div class="article-tags">
-              <span class="tag">F2P Guide</span>
-              <span class="tag">Resource Management</span>
+              <span class="tag">Guide</span>
               <span class="tag">Strategy</span>
+              <span class="tag">Mathematics</span>
+              <span class="tag">F2P</span>
             </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
+            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
+              <p style="margin: 0 0 10px 0;"><strong>Key Topics:</strong></p>
+              <ul style="margin: 0; color: var(--text-color);">
+                <li>📊 Understanding probability distributions and soft pity</li>
+                <li>⏰ Building optimal wish timelines</li>
+                <li>💰 Risk management strategies for different spending levels</li>
+                <li>🎯 Maximizing value from limited resources</li>
+              </ul>
+            </div>
+          </div>
           
-          <article class="blog-article">
-            <h4>Spiral Abyss 4.8: Team Compositions and Meta Shifts Analysis</h4>
+          <div class="blog-article">
+            <h4>Version 5.6 - Major Simulation Overhaul</h4>
             <div class="article-meta">
-              <span class="article-date">📅 October 15, 2024</span>
-              <span class="article-author">✍️ Harry</span>
+              <div class="article-date">
+                <i class="fas fa-calendar"></i>
+                November 20, 2024
+              </div>
+              <div class="article-author">
+                <i class="fas fa-user"></i>
+                Harry
+              </div>
             </div>
-            <p class="article-summary">Breaking down the current Spiral Abyss rotation with optimal team compositions for each chamber. Analysis of usage rates, clear times, and how recent character releases have shifted the meta landscape.</p>
+            <div class="article-summary">
+              Complete rewrite of the simulation engine with Chart.js integration and advanced resource management features.
+            </div>
             <div class="article-tags">
-              <span class="tag">Spiral Abyss</span>
-              <span class="tag">Team Building</span>
-              <span class="tag">Meta</span>
+              <span class="tag">Updates</span>
+              <span class="tag">Monte Carlo</span>
+              <span class="tag">Charts</span>
             </div>
-            <a href="#" class="read-more">Read more →</a>
-          </article>
+            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
+              <ul style="margin: 0; color: var(--text-color);">
+                <li>🎲 Added comprehensive Monte Carlo simulation system</li>
+                <li>📊 Implemented Chart.js for probability distribution graphs</li>
+                <li>💰 Enhanced resource calculation with multiple currency types</li>
+                <li>⚙️ Added save/load configuration functionality</li>
+              </ul>
+            </div>
+          </div>
         </div>
+        
+        <!-- Featured Badge Styles -->
+        <style>
+          .featured-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            font-size: 0.7em;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+          }
+          
+          .blog-article {
+            position: relative;
+          }
+          
+          .blog-controls select, .blog-controls input {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: var(--container-bg);
+            color: var(--text-color);
+            font-size: 14px;
+          }
+          
+          .blog-controls select:focus, .blog-controls input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+        </style>
       </div>
     </div>
 
@@ -1433,6 +1626,7 @@ const translations = {
     home: 'Home',
     calculator: 'Calculator',
     blog: 'Blog',
+    changelog: 'Changelog',
     settings: 'Settings',
     welcomeTitle: 'Welcome to Harry\'s Genshin Hub',
     welcomeSubtitle: 'Your ultimate destination for Genshin Impact calculations, insights, and resources',
@@ -1442,6 +1636,7 @@ const translations = {
     blogTitle: 'Blog & Insights',
     blogDesc: 'Tips, guides, and analysis of Genshin Impact mechanics and meta',
     readBlog: 'Read Blog',
+    readChangelog: 'View Changelog',
     settingsTitle: 'Settings',
     settingsDesc: 'Customize your experience with theme and language preferences',
     openSettings: 'Open Settings',
@@ -1466,6 +1661,7 @@ const translations = {
     home: 'ホーム',
     calculator: '計算機',
     blog: 'ブログ',
+    changelog: '変更履歴',
     settings: '設定',
     welcomeTitle: 'ハリーの原神ハブへようこそ',
     welcomeSubtitle: '原神の計算、洞察、リソースの究極の目的地',
@@ -1475,6 +1671,7 @@ const translations = {
     blogTitle: 'ブログ・洞察',
     blogDesc: '原神のメカニクスとメタのヒント、ガイド、分析',
     readBlog: 'ブログを読む',
+    readChangelog: '変更履歴を見る',
     settingsTitle: '設定',
     settingsDesc: 'テーマと言語設定でエクスペリエンスをカスタマイズ',
     openSettings: '設定を開く',
@@ -1499,6 +1696,7 @@ const translations = {
     home: 'Inicio',
     calculator: 'Calculadora',
     blog: 'Blog',
+    changelog: 'Registro de cambios',
     settings: 'Configuración',
     welcomeTitle: 'Bienvenido al Hub Genshin de Harry',
     welcomeSubtitle: 'Tu destino definitivo para cálculos, perspectivas y recursos de Genshin Impact',
@@ -1508,6 +1706,7 @@ const translations = {
     blogTitle: 'Blog y Perspectivas',
     blogDesc: 'Consejos, guías y análisis de mecánicas y meta de Genshin Impact',
     readBlog: 'Leer Blog',
+    readChangelog: 'Ver Registro de cambios',
     settingsTitle: 'Configuración',
     settingsDesc: 'Personaliza tu experiencia con preferencias de tema e idioma',
     openSettings: 'Abrir Configuración',
@@ -1532,6 +1731,7 @@ const translations = {
     home: '首页',
     calculator: '计算器',
     blog: '博客',
+    changelog: '更新日志',
     settings: '设置',
     welcomeTitle: '欢迎来到Harry的原神中心',
     welcomeSubtitle: '您进行原神计算、洞察和资源的终极目的地',
@@ -1541,6 +1741,7 @@ const translations = {
     blogTitle: '博客与洞察',
     blogDesc: '原神机制和元游戏的技巧、指南和分析',
     readBlog: '阅读博客',
+    readChangelog: '查看更新日志',
     settingsTitle: '设置',
     settingsDesc: '通过主题和语言偏好自定义您的体验',
     openSettings: '打开设置',
@@ -1567,20 +1768,37 @@ let currentLanguage = 'en';
 
 // Navigation functions
 function showPage(pageName) {
+  console.log("Switching to page:", pageName);
+  
   // Hide all pages
   document.querySelectorAll('.page-content').forEach(page => {
     page.classList.remove('active');
+    console.log("Hiding page:", page.id);
   });
   
   // Show selected page
-  document.getElementById(pageName + 'Page').classList.add('active');
+  const targetPage = document.getElementById(pageName + 'Page');
+  if (targetPage) {
+    targetPage.classList.add('active');
+    console.log("Showing page:", targetPage.id, "Classes:", targetPage.className);
+    
+    // Initialize blog posts when showing the changelog/blog page
+    if (pageName === 'changelog') {
+      loadBlogPosts();
+    }
+  } else {
+    console.error("Page not found:", pageName + 'Page');
+  }
   
   // Update navigation
   document.querySelectorAll('.nav-link').forEach(link => {
     link.classList.remove('active');
   });
   
-  document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+  const activeLink = document.querySelector(`[data-page="${pageName}"]`);
+  if (activeLink) {
+    activeLink.classList.add('active');
+  }
   
   // Close sidebar on mobile after navigation
   if (window.innerWidth <= 768) {
@@ -1612,9 +1830,13 @@ function changeLanguage(lang) {
     }
   });
   
-  // Update both language selectors
+  // Update language selector
   document.getElementById('languageSelector').value = lang;
-  document.getElementById('settingsLanguage').value = lang;
+  // Only update settings language selector if it exists
+  const settingsLanguage = document.getElementById('settingsLanguage');
+  if (settingsLanguage) {
+    settingsLanguage.value = lang;
+  }
 }
 
 // Settings page functions
@@ -2410,11 +2632,26 @@ function createChart(simResults) {
 
 // Modal functions
 function openChangelogModal() {
-  document.getElementById('changelogModal').style.display = 'block';
+  const modal = document.getElementById('changelogModal');
+  if (modal) {
+    modal.style.display = 'block';
+    // Force repaint to ensure modal is visible
+    setTimeout(function() {
+      modal.style.opacity = '1';
+    }, 10);
+  } else {
+    console.error('Changelog modal not found');
+  }
 }
 
 function closeChangelogModal() {
-  document.getElementById('changelogModal').style.display = 'none';
+  const modal = document.getElementById('changelogModal');
+  if (modal) {
+    modal.style.opacity = '0';
+    setTimeout(function() {
+      modal.style.display = 'none';
+    }, 300); // Match the transition duration
+  }
 }
 
 // Close modal when clicking outside of it
@@ -2422,6 +2659,17 @@ window.addEventListener('click', function(event) {
   const modal = document.getElementById('changelogModal');
   if (event.target === modal) {
     closeChangelogModal();
+  }
+});
+
+// Ensure the modal can be opened and closed properly
+document.addEventListener('DOMContentLoaded', function() {
+  const versionLink = document.querySelector('.version-link');
+  if (versionLink) {
+    versionLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      openChangelogModal();
+    });
   }
 });
 
@@ -2505,17 +2753,194 @@ function addAutoSaveListeners() {
   });
 }
 
-// Initialize the app when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-  // Set up navigation click listeners
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const page = this.getAttribute('data-page');
-      showPage(page);
-    });
+// Blog system functions
+function loadBlogPosts() {
+  if (!window.blogManager) {
+    console.error('Blog manager not loaded');
+    return;
+  }
+  
+  populateTagFilter();
+  filterPosts();
+}
+
+function populateTagFilter() {
+  const tagSelect = document.getElementById('tagFilter');
+  if (!tagSelect) return;
+  
+  // Clear existing options except "All Tags"
+  const allTagsOption = tagSelect.querySelector('[value="all"]');
+  tagSelect.innerHTML = '';
+  tagSelect.appendChild(allTagsOption);
+  
+  // Get all unique tags from posts
+  const allTags = [...new Set(window.blogManager.posts.flatMap(post => post.tags))];
+  allTags.sort();
+  
+  allTags.forEach(tag => {
+    const option = document.createElement('option');
+    option.value = tag;
+    option.textContent = tag;
+    tagSelect.appendChild(option);
+  });
+}
+
+function filterPosts() {
+  if (!window.blogManager) return;
+  
+  const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
+  const tagFilter = document.getElementById('tagFilter')?.value || 'all';
+  const searchFilter = document.getElementById('searchPosts')?.value || '';
+  
+  const filteredPosts = window.blogManager.getPosts({
+    category: categoryFilter,
+    tag: tagFilter,
+    search: searchFilter
   });
   
+  renderBlogPosts(filteredPosts);
+}
+
+function renderBlogPosts(posts) {
+  const container = document.getElementById('blogPostsContainer');
+  const noResults = document.getElementById('noResultsMessage');
+  
+  if (!container) return;
+  
+  if (posts.length === 0) {
+    container.style.display = 'none';
+    if (noResults) noResults.style.display = 'block';
+    return;
+  }
+  
+  container.style.display = 'flex';
+  if (noResults) noResults.style.display = 'none';
+  
+  container.innerHTML = '';
+  
+  posts.forEach(post => {
+    const article = document.createElement('article');
+    article.className = 'blog-article';
+    
+    const featuredBadge = post.featured ? '<div class="featured-badge">Featured</div>' : '';
+    
+    article.innerHTML = `
+      ${featuredBadge}
+      <h4>${escapeHtml(post.title)}</h4>
+      
+      <div class="article-meta">
+        <div class="article-date">
+          <i class="fas fa-calendar"></i>
+          ${window.blogManager.formatDate(post.date)}
+        </div>
+        <div class="article-author">
+          <i class="fas fa-user"></i>
+          ${escapeHtml(post.author)}
+        </div>
+        <div class="article-date">
+          <i class="fas fa-clock"></i>
+          ${window.blogManager.getReadingTime(post.content)}
+        </div>
+      </div>
+      
+      <div class="article-summary">
+        ${escapeHtml(post.summary)}
+      </div>
+      
+      <div class="article-tags">
+        ${post.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+      </div>
+      
+      <button class="read-more" onclick="openArticleModal('${post.id}')">
+        Read Full Article
+        <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+      </button>
+    `;
+    
+    container.appendChild(article);
+  });
+}
+
+function openArticleModal(postId) {
+  const post = window.blogManager.getPost(postId);
+  if (!post) {
+    console.error('Post not found:', postId);
+    return;
+  }
+  
+  // Create modal if it doesn't exist
+  let modal = document.getElementById('articleModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'articleModal';
+    modal.className = 'modal';
+    document.body.appendChild(modal);
+  }
+  
+  const featuredBadge = post.featured ? '<div class="featured-badge" style="position: relative; top: 0; right: 0; margin-bottom: 10px; width: fit-content;">Featured Article</div>' : '';
+  
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 800px; max-height: 90vh;">
+      <span class="close" onclick="closeArticleModal()">&times;</span>
+      ${featuredBadge}
+      <h2 style="color: var(--text-color); margin-top: ${post.featured ? '0' : '0'}; line-height: 1.3;">${escapeHtml(post.title)}</h2>
+      
+      <div class="article-meta" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);">
+        <div class="article-date">
+          <i class="fas fa-calendar"></i>
+          ${window.blogManager.formatDate(post.date)}
+        </div>
+        <div class="article-author">
+          <i class="fas fa-user"></i>
+          ${escapeHtml(post.author)}
+        </div>
+        <div class="article-date">
+          <i class="fas fa-clock"></i>
+          ${window.blogManager.getReadingTime(post.content)}
+        </div>
+      </div>
+      
+      <div class="article-tags" style="margin-bottom: 20px;">
+        ${post.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+      </div>
+      
+      <div class="article-content" style="line-height: 1.6; color: var(--text-color);">
+        ${post.content}
+      </div>
+    </div>
+  `;
+  
+  modal.style.display = 'block';
+  setTimeout(() => {
+    modal.style.opacity = '1';
+  }, 10);
+  
+  // Close modal when clicking outside
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeArticleModal();
+    }
+  });
+}
+
+function closeArticleModal() {
+  const modal = document.getElementById('articleModal');
+  if (modal) {
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Initialize the app when the page loads
+document.addEventListener('DOMContentLoaded', function() {
   // Load saved language preference
   const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
   changeLanguage(savedLanguage);
@@ -2532,8 +2957,11 @@ document.addEventListener('DOMContentLoaded', function() {
   if (savedDarkMode) {
     document.body.classList.add('dark-mode');
     document.getElementById('themeSwitch').checked = true;
-    // Also update settings page theme switch
-    document.getElementById('settingsThemeSwitch').checked = true;
+    // Only update settings theme switch if it exists
+    const settingsThemeSwitch = document.getElementById('settingsThemeSwitch');
+    if (settingsThemeSwitch) {
+      settingsThemeSwitch.checked = true;
+    }
   }
   
   // Add auto-save listeners
@@ -2551,6 +2979,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.key === 'Escape') {
       closeChangelogModal();
     }
+  });
+  
+  // Set up navigation click listeners at the end to ensure showPage() is defined
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const page = this.getAttribute('data-page');
+      showPage(page);
+    });
   });
 });
 </script>
