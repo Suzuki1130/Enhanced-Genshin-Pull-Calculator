@@ -9,7 +9,6 @@ A stylish and powerful web app to calculate your chances and plan your pulls in 
 - 📈 Visual charts for pull distribution  
 - 💾 Save and load configurations per user  
 - 🌙 Light/Dark theme toggle  
-- 🔒 Local login system (no internet needed, all saved in your browser)
 
 ## 🔧 How It Works
 
@@ -29,4 +28,4 @@ A stylish and powerful web app to calculate your chances and plan your pulls in 
 
 ## 🙌 Credits
 
-Made by **Harry** | Improvements by **Trae AI**
+Made by **Harry** | Improvements by **Warp**
