@@ -282,6 +282,12 @@
       h1 {
         font-size: 2em;
       }
+      
+      
+      .main-content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
     }
     
     /* Accessibility improvements */
@@ -366,6 +372,17 @@
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
+    }
+    
+    /* FatePoints guaranteed styling */
+    .fate-points-guaranteed {
+      color: #2ecc71 !important;
+      font-weight: bold !important;
+    }
+    
+    .fate-points-guaranteed:focus {
+      border-color: #2ecc71 !important;
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3) !important;
     }
     
     /* Version and changelog styles */
@@ -565,28 +582,6 @@
       font-size: 12px;
     }
     
-    .mobile-menu-btn {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 45px;
-      height: 45px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      z-index: 1001;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
-      display: block;
-    }
-    
-    .mobile-menu-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
     
     .main-content {
       margin-left: 0;
@@ -599,16 +594,18 @@
     /* Desktop styles */
     @media (min-width: 769px) {
       .sidebar {
-        left: 0;
+        left: 0 !important; /* Force sidebar visible on desktop */
+        transform: translateX(0) !important; /* Override any transforms */
+      }
+      
+      .sidebar.active {
+        left: 0 !important; /* Ensure active class doesn't interfere */
       }
       
       .main-content {
         margin-left: 250px;
       }
       
-      .mobile-menu-btn {
-        display: none;
-      }
     }
     
     /* Page content containers */
@@ -1045,7 +1042,6 @@
     </div>
   </div>
 
-  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 
 
   <div class="main-content">
@@ -1256,13 +1252,6 @@
               <div id="weapPityProgress" class="progress-fill" style="width: 0%"></div>
             </div>
           </div>
-          <div>
-            <label for="weapGuaranteed">Next Weapon Guaranteed?</label>
-            <select id="weapGuaranteed">
-              <option value="false">No (66.7% chance)</option>
-              <option value="true">Yes (Guaranteed)</option>
-            </select>
-          </div>
         <div>
           <div class="tooltip-wrapper">
             <label for="fatepoints">Fate Points:</label>
@@ -1273,9 +1262,9 @@
               </div>
             </span>
           </div>
-          <select id="fatepoints">
-            <option value="0">0 Points</option>
-            <option value="1">1 Point (Next Guaranteed)</option>
+          <select id="fatepoints" onchange="updateFatePointsDisplay()" aria-label="Fate points selector">
+            <option value="0">Fate Points 0/1</option>
+            <option value="1">Fate Points 1/1 (Guaranteed)</option>
           </select>
         </div>
         </div>
@@ -1463,34 +1452,12 @@
           </div>
         </div>
         
-          .blog-controls select, .blog-controls input {
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 12px;
-            background: var(--container-bg);
-            color: var(--text-color);
-            font-size: 14px;
-          }
-          
-          .blog-controls select:focus, .blog-controls input:focus {
-            border-color: #667eea;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-          }
-        </style>
       </div>
     </div>
 
   </div>
 </div>
 <script>
-// Define essential functions first to avoid ReferenceErrors
-function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar');
-  if (sidebar) {
-    sidebar.classList.toggle('active');
-  }
-}
 
 function showPage(pageName) {
   console.log("Switching to page:", pageName);
@@ -1522,13 +1489,8 @@ function showPage(pageName) {
     activeLink.classList.add('active');
   }
   
-  // Close sidebar on mobile after navigation
-  if (window.innerWidth <= 768) {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-      sidebar.classList.remove('active');
-    }
-  }
+  // Close sidebar on mobile after navigation (only if user clicked a nav link)
+  // Don't auto-close on initial page load or programmatic page switches
 }
 
 function changeLanguage(lang) {
@@ -1874,10 +1836,22 @@ class GenshinCalculator {
             }
           }
         } else {
-          // Weapon banner logic (unchanged)
-          if (weaponPoints >= 1 || Math.random() < 1/3) {
-            targetObtained++; weaponPoints = 0;
-          } else weaponPoints++;
+          // Weapon banner logic - use FatePoints as single source of truth
+          if (weaponPoints >= 1) {
+            // Already guaranteed by Epitomized Path
+            targetObtained++;
+            weaponPoints = 0; // Reset after getting guaranteed weapon
+          } else {
+            // Roll for weapon (66.7% chance for target weapon)
+            if (Math.random() < 2/3) {
+              // Got target weapon
+              targetObtained++;
+              weaponPoints = 0; // Reset on success
+            } else {
+              // Got non-target weapon, increment FatePoints
+              weaponPoints = 1; // Set to 1 (next pull guaranteed)
+            }
+          }
         }
       }
     }
@@ -1893,7 +1867,7 @@ class GenshinCalculator {
     };
   }
 
-  simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, radiancePity = 0) {
+  simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, radiancePity = 0) {
     let totalPullsUsed = 0, charObtained = 0, weapObtained = 0;
     let charSuccess = false, weapSuccess = false;
     
@@ -1907,7 +1881,7 @@ class GenshinCalculator {
     }
     
     if (weapGoal > 0 && totalPullsUsed < availablePulls) {
-      const weapResult = this.simulateSession('weapon', weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls - totalPullsUsed, 0);
+      const weapResult = this.simulateSession('weapon', weapGoal, weapPity, false, fatePoints, availablePulls - totalPullsUsed, 0);
       weapObtained = weapResult.fiveStarsObtained;
       totalPullsUsed += weapResult.pullsUsed;
       weapSuccess = weapResult.success;
@@ -1925,11 +1899,11 @@ class GenshinCalculator {
     };
   }
 
-  runCombinedSimulation(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, numSims, radiancePity = 0) {
+  runCombinedSimulation(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, numSims, radiancePity = 0) {
     const results = [];
     let fullSuccess = 0, charSuccess = 0, weapSuccess = 0;
     for (let i = 0; i < numSims; i++) {
-      const res = this.simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, weaponPoints, availablePulls, radiancePity);
+      const res = this.simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, radiancePity);
       results.push(res);
       if (res.success) fullSuccess++;
       if (res.charSuccess || charGoal === 0) charSuccess++;
@@ -1977,14 +1951,14 @@ class GenshinCalculator {
     return Math.ceil(total);
   }
 
-  calculateCombinedScenarios(charGoal, charPity, charGuaranteed, weapGoal, weapPity, weapGuaranteed, fatePoints) {
+  calculateCombinedScenarios(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints) {
     const s = {};
     s.charBest = charGoal ? this.calculateScenario('character', charGoal, charPity, true, 0, 'win_all') : 0;
     s.charWorst = charGoal ? this.calculateScenario('character', charGoal, charPity, charGuaranteed, 0, 'lose_all') : 0;
     s.charExpected = charGoal ? this.calculateExpectedPulls('character', charGoal, charPity, charGuaranteed, 0) : 0;
-    s.weapBest = weapGoal ? this.calculateScenario('weapon', weapGoal, weapPity, true, fatePoints, 'win_all') : 0;
-    s.weapWorst = weapGoal ? this.calculateScenario('weapon', weapGoal, weapPity, weapGuaranteed, fatePoints, 'lose_all') : 0;
-    s.weapExpected = weapGoal ? this.calculateExpectedPulls('weapon', weapGoal, weapPity, weapGuaranteed, fatePoints) : 0;
+    s.weapBest = weapGoal ? this.calculateScenario('weapon', weapGoal, weapPity, false, fatePoints, 'win_all') : 0;
+    s.weapWorst = weapGoal ? this.calculateScenario('weapon', weapGoal, weapPity, false, fatePoints, 'lose_all') : 0;
+    s.weapExpected = weapGoal ? this.calculateExpectedPulls('weapon', weapGoal, weapPity, false, fatePoints) : 0;
     s.combinedBest = s.charBest + s.weapBest;
     s.combinedWorst = s.charWorst + s.weapWorst;
     s.combinedExpected = s.charExpected + s.weapExpected;
@@ -2077,7 +2051,6 @@ async function calculate() {
   const charPity = Math.max(0, Math.min(89, +document.getElementById('charPity').value || 0));
   const weapPity = Math.max(0, Math.min(79, +document.getElementById('weapPity').value || 0));
   const charGuaranteed = document.getElementById('charGuaranteed').value === 'true';
-  const weapGuaranteed = document.getElementById('weapGuaranteed').value === 'true';
   const fatePoints = +document.getElementById('fatepoints').value;
   const radiancePity = wantChar ? +document.getElementById('radiancePity').value : 0;
   const numSims = +document.getElementById('simulations').value;
@@ -2088,8 +2061,7 @@ async function calculate() {
   if (mode === 'simulation' || mode === 'both') {
     const simResults = calculator.runCombinedSimulation(
       charGoal, charPity, charGuaranteed,
-      weapGoal, weapPity, weapGuaranteed,
-      fatePoints, totalPulls, numSims, radiancePity
+      weapGoal, weapPity, fatePoints, totalPulls, numSims, radiancePity
     );
 
     output += '<h3>Monte Carlo Simulation Results</h3>';
@@ -2120,8 +2092,7 @@ async function calculate() {
   if (mode === 'scenarios' || mode === 'both') {
     const scenarios = calculator.calculateCombinedScenarios(
       charGoal, charPity, charGuaranteed,
-      weapGoal, weapPity, weapGuaranteed,
-      fatePoints
+      weapGoal, weapPity, fatePoints
     );
 
     output += '<h3>Luck Scenarios</h3>';
@@ -2244,7 +2215,6 @@ function saveConfiguration() {
     wantWeapon: document.getElementById('wantWeapon').checked,
     refinements: document.getElementById('refinements').value,
     weapPity: document.getElementById('weapPity').value,
-    weapGuaranteed: document.getElementById('weapGuaranteed').value,
     fatepoints: document.getElementById('fatepoints').value,
     simulations: document.getElementById('simulations').value,
     luckMode: document.getElementById('luckMode').value
@@ -2264,6 +2234,17 @@ function loadConfiguration() {
   
   const config = JSON.parse(savedConfig);
   
+  // Migration: convert legacy weapGuaranteed to FatePoints
+  if (config.weapGuaranteed === 'true' || config.weapGuaranteed === true) {
+    config.fatepoints = 1;
+    delete config.weapGuaranteed;
+    console.log('Migrated legacy weapGuaranteed=true to fatepoints=1');
+  } else if (config.weapGuaranteed === 'false' || config.weapGuaranteed === false) {
+    config.fatepoints = config.fatepoints || 0;
+    delete config.weapGuaranteed;
+    console.log('Migrated legacy weapGuaranteed=false, kept existing fatepoints');
+  }
+  
   // Load values into form
   document.getElementById('primos').value = config.primos || 0;
   document.getElementById('fates').value = config.fates || 0;
@@ -2280,7 +2261,6 @@ function loadConfiguration() {
   document.getElementById('wantWeapon').checked = config.wantWeapon;
   document.getElementById('refinements').value = config.refinements || 0;
   document.getElementById('weapPity').value = config.weapPity || 0;
-  document.getElementById('weapGuaranteed').value = config.weapGuaranteed || 'false';
   document.getElementById('fatepoints').value = config.fatepoints || 0;
   
   document.getElementById('simulations').value = config.simulations || 10000;
@@ -2291,6 +2271,7 @@ function loadConfiguration() {
   toggleWeaponInputs();
   updateResourceSummary();
   updateRadiancePityDisplay();
+  updateFatePointsDisplay();
   
   alert('Configuration loaded successfully!');
 }
@@ -2362,7 +2343,6 @@ function exportConfiguration() {
     wantWeapon: document.getElementById('wantWeapon').checked,
     refinements: document.getElementById('refinements').value,
     weapPity: document.getElementById('weapPity').value,
-    weapGuaranteed: document.getElementById('weapGuaranteed').value,
     fatepoints: document.getElementById('fatepoints').value,
     simulations: document.getElementById('simulations').value,
     luckMode: document.getElementById('luckMode').value,
@@ -2389,7 +2369,18 @@ function importConfiguration(event) {
     try {
       const config = JSON.parse(e.target.result);
       
-      // Load values into form (same as loadConfiguration)
+      // Migration: convert legacy weapGuaranteed to FatePoints
+      if (config.weapGuaranteed === 'true' || config.weapGuaranteed === true) {
+        config.fatepoints = 1;
+        delete config.weapGuaranteed;
+        console.log('Migrated legacy weapGuaranteed=true to fatepoints=1');
+      } else if (config.weapGuaranteed === 'false' || config.weapGuaranteed === false) {
+        config.fatepoints = config.fatepoints || 0;
+        delete config.weapGuaranteed;
+        console.log('Migrated legacy weapGuaranteed=false, kept existing fatepoints');
+      }
+      
+      // Load values into form
       document.getElementById('primos').value = config.primos || 0;
       document.getElementById('fates').value = config.fates || 0;
       document.getElementById('genesis').value = config.genesis || 0;
@@ -2405,7 +2396,6 @@ function importConfiguration(event) {
       document.getElementById('wantWeapon').checked = config.wantWeapon;
       document.getElementById('refinements').value = config.refinements || 0;
       document.getElementById('weapPity').value = config.weapPity || 0;
-      document.getElementById('weapGuaranteed').value = config.weapGuaranteed || 'false';
       document.getElementById('fatepoints').value = config.fatepoints || 0;
       
       document.getElementById('simulations').value = config.simulations || 10000;
@@ -2416,6 +2406,7 @@ function importConfiguration(event) {
       toggleWeaponInputs();
       updateResourceSummary();
       updateRadiancePityDisplay();
+      updateFatePointsDisplay();
       
       alert('Configuration imported successfully!');
     } catch (error) {
@@ -2653,12 +2644,30 @@ function updateRadiancePityDisplay() {
   document.getElementById('radiancePityDisplay').textContent = `${radiancePity} / 3`;
 }
 
+// Update FatePoints display with visual emphasis for guaranteed state
+function updateFatePointsDisplay() {
+  const fatePointsSelect = document.getElementById('fatepoints');
+  const fatePoints = +fatePointsSelect.value;
+  
+  if (fatePoints === 1) {
+    // Add visual emphasis for guaranteed state
+    fatePointsSelect.classList.add('fate-points-guaranteed');
+    fatePointsSelect.setAttribute('aria-label', 'Fate points: 1 of 1, guaranteed');
+    console.log('FatePoints UI updated: Guaranteed state (1/1)');
+  } else {
+    // Remove visual emphasis for non-guaranteed state
+    fatePointsSelect.classList.remove('fate-points-guaranteed');
+    fatePointsSelect.setAttribute('aria-label', 'Fate points: 0 of 1');
+    console.log('FatePoints UI updated: Normal state (0/1)');
+  }
+}
+
 // Auto-save inputs to localStorage
 function autoSaveInputs() {
   const inputs = [
     'primos', 'fates', 'genesis', 'stardust', 'starglitter',
     'constellations', 'charPity', 'charGuaranteed', 'radiancePity',
-    'refinements', 'weapPity', 'weapGuaranteed', 'fatepoints',
+    'refinements', 'weapPity', 'fatepoints',
     'simulations', 'luckMode'
   ];
   
@@ -2692,6 +2701,17 @@ function autoLoadInputs() {
   try {
     const config = JSON.parse(savedData);
     
+    // Migration: convert legacy weapGuaranteed to FatePoints
+    if (config.weapGuaranteed === 'true' || config.weapGuaranteed === true) {
+      config.fatepoints = 1;
+      delete config.weapGuaranteed;
+      console.log('Auto-load: Migrated legacy weapGuaranteed=true to fatepoints=1');
+    } else if (config.weapGuaranteed === 'false' || config.weapGuaranteed === false) {
+      config.fatepoints = config.fatepoints || 0;
+      delete config.weapGuaranteed;
+      console.log('Auto-load: Migrated legacy weapGuaranteed=false, kept existing fatepoints');
+    }
+    
     // Load regular inputs
     Object.keys(config).forEach(id => {
       const element = document.getElementById(id);
@@ -2713,6 +2733,7 @@ function autoLoadInputs() {
     toggleWeaponInputs();
     updateResourceSummary();
     updateRadiancePityDisplay();
+    updateFatePointsDisplay();
   } catch (error) {
     console.log('Could not load auto-saved inputs:', error);
   }
@@ -2757,6 +2778,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Then update resource summary and displays
     updateResourceSummary();
     updateRadiancePityDisplay();
+    updateFatePointsDisplay();
     
     // Check for saved theme preference
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -2800,11 +2822,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
     
-    // Make sure mobile menu button works
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', toggleSidebar);
-    }
     
     console.log('App initialized successfully!');
   } catch (error) {
