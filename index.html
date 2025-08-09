@@ -3044,56 +3044,88 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+// Missing utility functions - define them here
+function validateAndUpdateResources(element) {
+  // Ensure the value is within valid range
+  const value = Math.max(0, Math.min(element.max || 999999, +element.value || 0));
+  element.value = value;
+  updateResourceSummary();
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  localStorage.setItem('darkMode', isDarkMode);
+}
+
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-  // Load saved language preference
-  const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
-  changeLanguage(savedLanguage);
+  console.log('DOM fully loaded, initializing app...');
   
-  // Auto-load saved inputs first
-  autoLoadInputs();
-  
-  // Then update resource summary and displays
-  updateResourceSummary();
-  updateRadiancePityDisplay();
-  
-  // Check for saved theme preference
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-  if (savedDarkMode) {
-    document.body.classList.add('dark-mode');
-    document.getElementById('themeSwitch').checked = true;
-    // Only update settings theme switch if it exists
-    const settingsThemeSwitch = document.getElementById('settingsThemeSwitch');
-    if (settingsThemeSwitch) {
-      settingsThemeSwitch.checked = true;
-    }
-  }
-  
-  // Add auto-save listeners
-  addAutoSaveListeners();
-  
-  // Add keyboard shortcuts
-  document.addEventListener('keydown', function(event) {
-    // Ctrl+Enter to calculate
-    if (event.ctrlKey && event.key === 'Enter') {
-      event.preventDefault();
-      calculate();
+  try {
+    // Load saved language preference
+    const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+    changeLanguage(savedLanguage);
+    
+    // Auto-load saved inputs first
+    autoLoadInputs();
+    
+    // Then update resource summary and displays
+    updateResourceSummary();
+    updateRadiancePityDisplay();
+    
+    // Check for saved theme preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (savedDarkMode) {
+      document.body.classList.add('dark-mode');
+      const themeSwitch = document.getElementById('themeSwitch');
+      if (themeSwitch) {
+        themeSwitch.checked = true;
+      }
+      // Only update settings theme switch if it exists
+      const settingsThemeSwitch = document.getElementById('settingsThemeSwitch');
+      if (settingsThemeSwitch) {
+        settingsThemeSwitch.checked = true;
+      }
     }
     
-    // Escape to close modal
-    if (event.key === 'Escape') {
-      closeChangelogModal();
-    }
-  });
-  
-  // Set up navigation click listeners at the end to ensure showPage() is defined
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const page = this.getAttribute('data-page');
-      showPage(page);
+    // Add auto-save listeners
+    addAutoSaveListeners();
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+      // Ctrl+Enter to calculate
+      if (event.ctrlKey && event.key === 'Enter') {
+        event.preventDefault();
+        calculate();
+      }
+      
+      // Escape to close modal
+      if (event.key === 'Escape') {
+        closeChangelogModal();
+      }
     });
-  });
+    
+    // Set up navigation click listeners at the end to ensure showPage() is defined
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.getAttribute('data-page');
+        console.log('Navigation clicked:', page);
+        showPage(page);
+      });
+    });
+    
+    // Make sure mobile menu button works
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', toggleSidebar);
+    }
+    
+    console.log('App initialized successfully!');
+  } catch (error) {
+    console.error('Error initializing app:', error);
+  }
 });
 </script>
 </body>
