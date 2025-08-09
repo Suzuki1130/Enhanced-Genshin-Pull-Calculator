@@ -22,8 +22,6 @@
       --label-color: #555;
       --border-color: #e1e5e9;
       --progress-bg: #e1e5e9;
-      --results-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --results-text: white;
       --chart-bg: white;
       --credits-color: #666;
     }
@@ -36,8 +34,6 @@
       --label-color: #bbb;
       --border-color: #444;
       --progress-bg: #444;
-      --results-gradient: linear-gradient(135deg, #8052ec 0%, #d161ff 100%);
-      --results-text: #e1e1e1;
       --chart-bg: #2a2c3a;
       --credits-color: #aaa;
     }
@@ -141,11 +137,13 @@
     }
 
     .results {
-      background: var(--results-gradient);
-      color: var(--results-text);
+      background: var(--section-bg);
+      color: var(--text-color);
       border-radius: 12px;
       padding: 20px;
       margin-top: 20px;
+      border-left: 4px solid #667eea;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
       transition: background 0.3s ease, color 0.3s ease;
     }
 
@@ -1124,7 +1122,7 @@
         Made by Harry
       </div>
       <div class="version-info" style="text-align: center; font-size: 0.8em; margin-bottom: 20px; color: var(--credits-color);">
-        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;">Version 5.8</a>
+        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;"><i class="fas fa-history" style="margin-right: 5px;"></i>Version 5.8</a>
       </div>
 
     <div class="section">
@@ -1271,7 +1269,7 @@
             <span class="tooltip-icon">
               ?
               <div class="tooltip">
-                <strong>Fate Points:</strong> Part of the Epitomized Path system. Each time you get a 5★ weapon that isn't your selected target, you gain 1 Fate Point. At 2 Fate Points, your next 5★ weapon is guaranteed to be your selected target. Points reset when you get the target weapon or change banners.
+                <strong>Fate Points:</strong> Part of the Epitomized Path system. Each time you get a 5★ weapon that isn't your selected target, you gain 1 Fate Point. At 1 Fate Point, your next 5★ weapon is guaranteed to be your selected target. Points reset when you get the target weapon or change banners.
               </div>
             </span>
           </div>
@@ -1412,7 +1410,7 @@
       </div>
     </div>
 
-    <!-- Blog/Changelog Page -->
+    <!-- Changelog Page -->
     <div id="changelogPage" class="page-content">
       <div class="container">
         <div class="blog-header">
@@ -1420,61 +1418,13 @@
           <div class="blog-divider"></div>
         </div>
         
-        <!-- Author Profile -->
-        <div class="operator-profile">
-          <div class="profile-header">
-            <i class="fas fa-user-circle" style="margin-right: 10px;"></i>
-            <h3>About Harry</h3>
-          </div>
-          <div class="profile-content">
-            <div class="profile-item">
-              <span class="profile-label">Role:</span>
-              <span class="profile-value">Developer & Genshin Impact Enthusiast</span>
-            </div>
-            <div class="profile-item">
-              <span class="profile-label">Specialties:</span>
-              <span class="profile-value">Probability Theory, Game Mechanics Analysis, Web Development</span>
-            </div>
-            <div class="profile-item">
-              <span class="profile-label">Bio:</span>
-              <span class="profile-value">
-                Passionate Genshin Impact player and developer with a love for mathematics and probability theory. 
-                I created this calculator to help fellow Travelers make informed decisions about their wish strategies.
-                <div class="profile-note">
-                  <i class="fas fa-lightbulb"></i>
-                  When I'm not coding, you can find me exploring Teyvat and theorycrafting optimal team compositions.
-                </div>
-              </span>
-            </div>
-          </div>
-        </div>
-        
         <!-- Changelog Entries -->
-        <div class="blog-posts">
-          <div class="blog-article">
-            <div class="featured-badge">Latest</div>
-            <h4>Version 5.8 - Enhanced Features & UI</h4>
-            <div class="article-meta">
-              <div class="article-date">
-                <i class="fas fa-calendar"></i>
-                January 15, 2025
-              </div>
-              <div class="article-author">
-                <i class="fas fa-user"></i>
-                Harry
-              </div>
-            </div>
-            <div class="article-summary">
-              A comprehensive breakdown of the latest features added to our pull calculator, including enhanced Radiance Pity mechanics and improved Monte Carlo simulations.
-            </div>
-            <div class="article-tags">
-              <span class="tag">Updates</span>
-              <span class="tag">Calculator</span>
-              <span class="tag">Features</span>
-              <span class="tag">Radiance Pity</span>
-            </div>
-            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
-              <ul style="margin: 0; color: var(--text-color);">
+        <div class="changelog-list">
+          <div class="changelog-item">
+            <div class="changelog-version">Version 5.8</div>
+            <div class="changelog-date">January 15, 2025</div>
+            <div class="changelog-changes">
+              <ul>
                 <li>✨ Added rich tooltips with detailed explanations for key mechanics</li>
                 <li>🎨 Enhanced dark mode with better theme persistence</li>
                 <li>📱 Improved mobile responsiveness and layout</li>
@@ -1486,28 +1436,11 @@
             </div>
           </div>
           
-          <div class="blog-article">
-            <h4>Version 5.7 - Radiance Pity System</h4>
-            <div class="article-meta">
-              <div class="article-date">
-                <i class="fas fa-calendar"></i>
-                December 28, 2024
-              </div>
-              <div class="article-author">
-                <i class="fas fa-user"></i>
-                Harry
-              </div>
-            </div>
-            <div class="article-summary">
-              Added comprehensive support for the Radiance Pity system introduced in Genshin Impact 5.0, with improved simulation accuracy.
-            </div>
-            <div class="article-tags">
-              <span class="tag">Updates</span>
-              <span class="tag">Radiance Pity</span>
-              <span class="tag">Monte Carlo</span>
-            </div>
-            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
-              <ul style="margin: 0; color: var(--text-color);">
+          <div class="changelog-item">
+            <div class="changelog-version">Version 5.7</div>
+            <div class="changelog-date">December 28, 2024</div>
+            <div class="changelog-changes">
+              <ul>
                 <li>🎯 Added Radiance Pity system for v5.0+ mechanics</li>
                 <li>⚡ Improved Monte Carlo simulation performance</li>
                 <li>📊 Enhanced chart rendering with better error handling</li>
@@ -1516,60 +1449,11 @@
             </div>
           </div>
           
-          <div class="blog-article">
-            <h4>Strategic Wishing Guide</h4>
-            <div class="article-meta">
-              <div class="article-date">
-                <i class="fas fa-calendar"></i>
-                December 15, 2024
-              </div>
-              <div class="article-author">
-                <i class="fas fa-user"></i>
-                Harry
-              </div>
-            </div>
-            <div class="article-summary">
-              Learn how to approach wish planning from a mathematical perspective, optimizing your pulls for maximum value whether you're F2P or spending.
-            </div>
-            <div class="article-tags">
-              <span class="tag">Guide</span>
-              <span class="tag">Strategy</span>
-              <span class="tag">Mathematics</span>
-              <span class="tag">F2P</span>
-            </div>
-            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
-              <p style="margin: 0 0 10px 0;"><strong>Key Topics:</strong></p>
-              <ul style="margin: 0; color: var(--text-color);">
-                <li>📊 Understanding probability distributions and soft pity</li>
-                <li>⏰ Building optimal wish timelines</li>
-                <li>💰 Risk management strategies for different spending levels</li>
-                <li>🎯 Maximizing value from limited resources</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div class="blog-article">
-            <h4>Version 5.6 - Major Simulation Overhaul</h4>
-            <div class="article-meta">
-              <div class="article-date">
-                <i class="fas fa-calendar"></i>
-                November 20, 2024
-              </div>
-              <div class="article-author">
-                <i class="fas fa-user"></i>
-                Harry
-              </div>
-            </div>
-            <div class="article-summary">
-              Complete rewrite of the simulation engine with Chart.js integration and advanced resource management features.
-            </div>
-            <div class="article-tags">
-              <span class="tag">Updates</span>
-              <span class="tag">Monte Carlo</span>
-              <span class="tag">Charts</span>
-            </div>
-            <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 3px solid #667eea;">
-              <ul style="margin: 0; color: var(--text-color);">
+          <div class="changelog-item">
+            <div class="changelog-version">Version 5.6</div>
+            <div class="changelog-date">November 20, 2024</div>
+            <div class="changelog-changes">
+              <ul>
                 <li>🎲 Added comprehensive Monte Carlo simulation system</li>
                 <li>📊 Implemented Chart.js for probability distribution graphs</li>
                 <li>💰 Enhanced resource calculation with multiple currency types</li>
@@ -1579,27 +1463,6 @@
           </div>
         </div>
         
-        <!-- Featured Badge Styles -->
-        <style>
-          .featured-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            font-size: 0.7em;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-          }
-          
-          .blog-article {
-            position: relative;
-          }
-          
           .blog-controls select, .blog-controls input {
             border: 2px solid var(--border-color);
             border-radius: 8px;
@@ -1644,12 +1507,7 @@ function showPage(pageName) {
     targetPage.classList.add('active');
     console.log("Showing page:", targetPage.id, "Classes:", targetPage.className);
     
-    // Initialize blog posts when showing the changelog/blog page
-    if (pageName === 'changelog') {
-      if (typeof loadBlogPosts === 'function') {
-        loadBlogPosts();
-      }
-    }
+    // Changelog page is now simplified, no initialization needed
   } else {
     console.error("Page not found:", pageName + 'Page');
   }
@@ -2093,7 +1951,7 @@ class GenshinCalculator {
   calculateExpectedPulls(banner, goal, pity, guaranteed, points) {
     const expected = banner === 'character'
       ? (guaranteed ? 75 : 112.5)
-      : points >= 2 ? 65 : points === 1 ? 85 : 105;
+      : points >= 1 ? 65 : 105;
     return Math.ceil((expected * goal) - pity);
   }
 
@@ -2280,19 +2138,19 @@ async function calculate() {
       output += '<h5 style="margin: 0 0 10px 0; color: #667eea;">📊 Your Progress Analysis</h5>';
       
       if (totalPulls >= scenarios.charBest) {
-        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.charBest} more than needed! Great job saving up!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.charBest} more than needed! Great job saving up!</p>`;
       } else {
         output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.charBest - totalPulls} more pulls to reach the best case scenario.</p>`;
       }
       
       if (totalPulls >= scenarios.charExpected) {
-        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.charExpected} pulls ahead! Excellent preparation!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.charExpected} pulls ahead! Excellent preparation!</p>`;
       } else {
         output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.charExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
       }
       
       if (totalPulls >= scenarios.charWorst) {
-        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
       } else {
         output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.charWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
       }
@@ -2311,19 +2169,19 @@ async function calculate() {
       output += '<h5 style="margin: 0 0 10px 0; color: #764ba2;">⚔️ Your Weapon Progress Analysis</h5>';
       
       if (totalPulls >= scenarios.weapBest) {
-        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.weapBest} more than needed! Great job saving up!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.weapBest} more than needed! Great job saving up!</p>`;
       } else {
         output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.weapBest - totalPulls} more pulls to reach the best case scenario.</p>`;
       }
       
       if (totalPulls >= scenarios.weapExpected) {
-        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.weapExpected} pulls ahead! Excellent preparation!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.weapExpected} pulls ahead! Excellent preparation!</p>`;
       } else {
         output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.weapExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
       }
       
       if (totalPulls >= scenarios.weapWorst) {
-        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
       } else {
         output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.weapWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
       }
@@ -2342,19 +2200,19 @@ async function calculate() {
       output += '<h5 style="margin: 0 0 10px 0; color: #a855f7;">🎯 Combined Goals Progress Analysis</h5>';
       
       if (totalPulls >= scenarios.combinedBest) {
-        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.combinedBest} more than needed for both goals! Incredible planning!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.combinedBest} more than needed for both goals! Incredible planning!</p>`;
       } else {
         output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.combinedBest - totalPulls} more pulls to get both character and weapon in the best case.</p>`;
       }
       
       if (totalPulls >= scenarios.combinedExpected) {
-        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.combinedExpected} pulls ahead for both goals! Masterful preparation!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.combinedExpected} pulls ahead for both goals! Masterful preparation!</p>`;
       } else {
         output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.combinedExpected - totalPulls} more pulls to reach both goals in the expected scenario.</p>`;
       }
       
       if (totalPulls >= scenarios.combinedWorst) {
-        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're completely safe even with terrible luck on both banners! Legendary planning!</p>`;
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're completely safe even with terrible luck on both banners! Legendary planning!</p>`;
       } else {
         output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.combinedWorst - totalPulls} more pulls to guarantee both goals even with the worst luck.</p>`;
       }
@@ -2869,185 +2727,12 @@ function addAutoSaveListeners() {
   });
 }
 
-// Blog system functions
-function loadBlogPosts() {
-  if (!window.blogManager) {
-    console.error('Blog manager not loaded');
-    return;
-  }
-  
-  populateTagFilter();
-  filterPosts();
+// Simplified changelog functions
+function showChangelog() {
+  // Simple function to show the changelog page
+  showPage('changelog');
 }
 
-function populateTagFilter() {
-  const tagSelect = document.getElementById('tagFilter');
-  if (!tagSelect) return;
-  
-  // Clear existing options except "All Tags"
-  const allTagsOption = tagSelect.querySelector('[value="all"]');
-  tagSelect.innerHTML = '';
-  tagSelect.appendChild(allTagsOption);
-  
-  // Get all unique tags from posts
-  const allTags = [...new Set(window.blogManager.posts.flatMap(post => post.tags))];
-  allTags.sort();
-  
-  allTags.forEach(tag => {
-    const option = document.createElement('option');
-    option.value = tag;
-    option.textContent = tag;
-    tagSelect.appendChild(option);
-  });
-}
-
-function filterPosts() {
-  if (!window.blogManager) return;
-  
-  const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
-  const tagFilter = document.getElementById('tagFilter')?.value || 'all';
-  const searchFilter = document.getElementById('searchPosts')?.value || '';
-  
-  const filteredPosts = window.blogManager.getPosts({
-    category: categoryFilter,
-    tag: tagFilter,
-    search: searchFilter
-  });
-  
-  renderBlogPosts(filteredPosts);
-}
-
-function renderBlogPosts(posts) {
-  const container = document.getElementById('blogPostsContainer');
-  const noResults = document.getElementById('noResultsMessage');
-  
-  if (!container) return;
-  
-  if (posts.length === 0) {
-    container.style.display = 'none';
-    if (noResults) noResults.style.display = 'block';
-    return;
-  }
-  
-  container.style.display = 'flex';
-  if (noResults) noResults.style.display = 'none';
-  
-  container.innerHTML = '';
-  
-  posts.forEach(post => {
-    const article = document.createElement('article');
-    article.className = 'blog-article';
-    
-    const featuredBadge = post.featured ? '<div class="featured-badge">Featured</div>' : '';
-    
-    article.innerHTML = `
-      ${featuredBadge}
-      <h4>${escapeHtml(post.title)}</h4>
-      
-      <div class="article-meta">
-        <div class="article-date">
-          <i class="fas fa-calendar"></i>
-          ${window.blogManager.formatDate(post.date)}
-        </div>
-        <div class="article-author">
-          <i class="fas fa-user"></i>
-          ${escapeHtml(post.author)}
-        </div>
-        <div class="article-date">
-          <i class="fas fa-clock"></i>
-          ${window.blogManager.getReadingTime(post.content)}
-        </div>
-      </div>
-      
-      <div class="article-summary">
-        ${escapeHtml(post.summary)}
-      </div>
-      
-      <div class="article-tags">
-        ${post.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
-      </div>
-      
-      <button class="read-more" onclick="openArticleModal('${post.id}')">
-        Read Full Article
-        <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
-      </button>
-    `;
-    
-    container.appendChild(article);
-  });
-}
-
-function openArticleModal(postId) {
-  const post = window.blogManager.getPost(postId);
-  if (!post) {
-    console.error('Post not found:', postId);
-    return;
-  }
-  
-  // Create modal if it doesn't exist
-  let modal = document.getElementById('articleModal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'articleModal';
-    modal.className = 'modal';
-    document.body.appendChild(modal);
-  }
-  
-  const featuredBadge = post.featured ? '<div class="featured-badge" style="position: relative; top: 0; right: 0; margin-bottom: 10px; width: fit-content;">Featured Article</div>' : '';
-  
-  modal.innerHTML = `
-    <div class="modal-content" style="max-width: 800px; max-height: 90vh;">
-      <span class="close" onclick="closeArticleModal()">&times;</span>
-      ${featuredBadge}
-      <h2 style="color: var(--text-color); margin-top: ${post.featured ? '0' : '0'}; line-height: 1.3;">${escapeHtml(post.title)}</h2>
-      
-      <div class="article-meta" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color);">
-        <div class="article-date">
-          <i class="fas fa-calendar"></i>
-          ${window.blogManager.formatDate(post.date)}
-        </div>
-        <div class="article-author">
-          <i class="fas fa-user"></i>
-          ${escapeHtml(post.author)}
-        </div>
-        <div class="article-date">
-          <i class="fas fa-clock"></i>
-          ${window.blogManager.getReadingTime(post.content)}
-        </div>
-      </div>
-      
-      <div class="article-tags" style="margin-bottom: 20px;">
-        ${post.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
-      </div>
-      
-      <div class="article-content" style="line-height: 1.6; color: var(--text-color);">
-        ${post.content}
-      </div>
-    </div>
-  `;
-  
-  modal.style.display = 'block';
-  setTimeout(() => {
-    modal.style.opacity = '1';
-  }, 10);
-  
-  // Close modal when clicking outside
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      closeArticleModal();
-    }
-  });
-}
-
-function closeArticleModal() {
-  const modal = document.getElementById('articleModal');
-  if (modal) {
-    modal.style.opacity = '0';
-    setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
-  }
-}
 
 function escapeHtml(text) {
   const div = document.createElement('div');
