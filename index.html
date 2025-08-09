@@ -1042,6 +1042,7 @@
             <option value="ja">日本語</option>
             <option value="es">Español</option>
             <option value="zh">中文</option>
+            <option value="pt">Português</option>
         </select>
     </div>
   </div>
@@ -1761,8 +1762,42 @@ const translations = {
     appDescription: 'Harry的原神中心是一个针对原神祈愿机制的高级概率计算器，具有辉光同调支持、蒙特卡洛模拟和综合分析工具。',
     version: '版本:',
     developer: '开发者:'
-  }
-};
+  },
+  pt: {
+    home: 'Início',
+    calculator: 'Calculadora',
+    blog: 'Blog',
+    changelog: 'Registo de alterações',
+    settings: 'Definições',
+    welcomeTitle: 'Bem-vindo ao Hub Genshin de Harry',
+    welcomeSubtitle: 'O seu destino final para cálculos, insights e recursos do Genshin Impact',
+    calculatorTitle: 'Calculadora de Puxadas',
+    calculatorDesc: 'Cálculos de probabilidade avançados com suporte de Radiance Pity e simulações de Monte Carlo',
+    tryCalculator: 'Experimente a Calculadora',
+    blogTitle: 'Blog e Insights',
+    blogDesc: 'Dicas, guias e análises das mecânicas e meta do Genshin Impact',
+    readBlog: 'Ler o Blog',
+    readChangelog: 'Ver Registo de Alterações',
+    settingsTitle: 'Definições',
+    settingsDesc: 'Personalize a sua experiência com preferências de tema e idioma',
+    openSettings: 'Abrir Definições',
+    aboutHarry: 'Sobre o Harry',
+    harryBio: 'Jogador apaixonado de Genshin Impact e desenvolvedor com amor pela matemática e teoria da probabilidade. Criei esta calculadora para ajudar outros Viajantes a tomar decisões informadas sobre as suas estratégias de puxadas. Quando não estou a programar, podem encontrar-me a explorar Teyvat e a teorizar sobre composições de equipa ideais.',
+    recentPosts: 'Publicações Recentes',
+    appearance: 'Aparência',
+    themeLabel: 'Tema:',
+    language: 'Idioma',
+    selectLanguage: 'Selecionar Idioma:',
+    dataManagement: 'Gestão de Dados',
+    clearAllData: 'Limpar Todos os Dados',
+    clearDataDesc: 'Remover todas as configurações e preferências guardadas',
+    exportData: 'Exportar Todos os Dados',
+    exportDataDesc: 'Descarregar todos os seus dados como um ficheiro de backup',
+    about: 'Sobre',
+    appDescription: 'O Hub Genshin de Harry é uma calculadora de probabilidade avançada para as mecânicas de puxadas do Genshin Impact, com suporte de Radiance Pity, simulações de Monte Carlo e ferramentas de análise abrangentes.',
+    version: 'Versão:',
+    developer: 'Desenvolvedor:'
+  },
 
 let currentLanguage = 'en';
 
@@ -2227,6 +2262,29 @@ async function calculate() {
       output += `<li>Expected case: ${scenarios.charExpected} pulls</li>`;
       output += `<li>Worst case (lose all 50/50): ${scenarios.charWorst} pulls</li>`;
       output += `</ul>`;
+      
+      // Add personalized progress messages for character banner
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 3px solid #667eea;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #667eea;">📊 Your Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.charBest) {
+        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.charBest} more than needed! Great job saving up!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.charBest - totalPulls} more pulls to reach the best case scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.charExpected) {
+        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.charExpected} pulls ahead! Excellent preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.charExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.charWorst) {
+        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.charWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
+      }
+      output += '</div>';
     }
     if (wantWeap) {
       output += '<h4>Weapon Banner</h4>';
@@ -2235,6 +2293,29 @@ async function calculate() {
       output += `<li>Expected case: ${scenarios.weapExpected} pulls</li>`;
       output += `<li>Worst case: ${scenarios.weapWorst} pulls</li>`;
       output += `</ul>`;
+      
+      // Add personalized progress messages for weapon banner
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(118, 75, 162, 0.1); border-radius: 8px; border-left: 3px solid #764ba2;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #764ba2;">⚔️ Your Weapon Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.weapBest) {
+        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.weapBest} more than needed! Great job saving up!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.weapBest - totalPulls} more pulls to reach the best case scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.weapExpected) {
+        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.weapExpected} pulls ahead! Excellent preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.weapExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.weapWorst) {
+        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.weapWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
+      }
+      output += '</div>';
     }
     if (wantChar && wantWeap) {
       output += '<h4>Combined Total</h4>';
@@ -2243,6 +2324,29 @@ async function calculate() {
       output += `<li>Expected case: ${scenarios.combinedExpected} pulls</li>`;
       output += `<li>Worst case: ${scenarios.combinedWorst} pulls</li>`;
       output += `</ul>`;
+      
+      // Add personalized progress messages for combined goals
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; border-left: 3px solid #a855f7;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #a855f7;">🎯 Combined Goals Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.combinedBest) {
+        output += `<p style="color: #28a745; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.combinedBest} more than needed for both goals! Incredible planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.combinedBest - totalPulls} more pulls to get both character and weapon in the best case.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.combinedExpected) {
+        output += `<p style="color: #28a745; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.combinedExpected} pulls ahead for both goals! Masterful preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.combinedExpected - totalPulls} more pulls to reach both goals in the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.combinedWorst) {
+        output += `<p style="color: #28a745; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're completely safe even with terrible luck on both banners! Legendary planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.combinedWorst - totalPulls} more pulls to guarantee both goals even with the worst luck.</p>`;
+      }
+      output += '</div>';
     }
   }
 
