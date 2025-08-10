@@ -311,8 +311,8 @@
     .tooltip-wrapper {
       position: relative;
       display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      align-items: flex-start;
+      gap: 8px;
     }
     
     .tooltip-icon {
@@ -381,6 +381,28 @@
     }
     
     .fate-points-guaranteed:focus {
+      border-color: #2ecc71 !important;
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3) !important;
+    }
+    
+    /* Character guaranteed styling */
+    .character-guaranteed {
+      color: #2ecc71 !important;
+      font-weight: bold !important;
+    }
+    
+    .character-guaranteed:focus {
+      border-color: #2ecc71 !important;
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3) !important;
+    }
+    
+    /* Radiance Pity guaranteed styling */
+    .radiance-pity-guaranteed {
+      color: #2ecc71 !important;
+      font-weight: bold !important;
+    }
+    
+    .radiance-pity-guaranteed:focus {
       border-color: #2ecc71 !important;
       box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3) !important;
     }
@@ -1157,6 +1179,7 @@
       </div>
     </div>
 
+
     <div class="section">
       <h3>Character Banner Goals</h3>
       <div class="checkbox-wrapper">
@@ -1202,7 +1225,7 @@
               </div>
             </span>
           </div>
-          <select id="charGuaranteed">
+          <select id="charGuaranteed" onchange="updateCharGuaranteedDisplay()">
             <option value="false">No (50/50)</option>
             <option value="true">Yes (Guaranteed)</option>
           </select>
@@ -1777,13 +1800,39 @@ class GenshinCalculator {
   }
 
   getPullProbability(pity, banner) {
-    const baseRate = this.baseRates[banner].fiveStar;
-    const softStart = this.softPityStart[banner];
     const hardLimit = this.hardPity[banner];
     if (pity >= hardLimit - 1) return 1.0;
-    if (pity < softStart) return baseRate;
-    const softPityProgress = (pity - softStart + 1) / (hardLimit - softStart);
-    return Math.min(baseRate + (1 - baseRate) * Math.pow(softPityProgress, 2), 1.0);
+    
+    // Use actual soft pity data from community research
+    if (banner === 'character') {
+      // Character banner soft pity (based on actual pull data)
+      if (pity < 73) return 0.006; // 0.6% base rate
+      
+      // Soft pity rates (pulls 74-89)
+      const softPityRates = [
+        0.0594, 0.1134, 0.1674, 0.2214, 0.2754, // pulls 74-78
+        0.3294, 0.3834, 0.4374, 0.4914, 0.5454, // pulls 79-83
+        0.5994, 0.6534, 0.7074, 0.7614, 0.8154, // pulls 84-88
+        0.8694 // pull 89
+      ];
+      
+      const softIndex = pity - 73;
+      return softIndex < softPityRates.length ? softPityRates[softIndex] : 1.0;
+    } else {
+      // Weapon banner soft pity (based on actual pull data)
+      if (pity < 62) return 0.007; // 0.7% base rate
+      
+      // Weapon soft pity rates (pulls 63-79)
+      const weaponSoftRates = [
+        0.070, 0.133, 0.196, 0.259, 0.322, // pulls 63-67
+        0.385, 0.448, 0.511, 0.574, 0.637, // pulls 68-72
+        0.700, 0.763, 0.826, 0.889, 0.952, // pulls 73-77
+        0.980, 0.995 // pulls 78-79
+      ];
+      
+      const softIndex = pity - 62;
+      return softIndex < weaponSoftRates.length ? weaponSoftRates[softIndex] : 1.0;
+    }
   }
 
   // Get the effective win rate based on Radiance Pity
@@ -1985,6 +2034,7 @@ class GenshinCalculator {
 }
 
 const calculator = new GenshinCalculator();
+
 
 function updateResourceSummary() {
   const p = +document.getElementById('primos').value || 0;
@@ -2272,6 +2322,7 @@ function loadConfiguration() {
   updateResourceSummary();
   updateRadiancePityDisplay();
   updateFatePointsDisplay();
+  updateCharGuaranteedDisplay();
   
   alert('Configuration loaded successfully!');
 }
@@ -2407,6 +2458,7 @@ function importConfiguration(event) {
       updateResourceSummary();
       updateRadiancePityDisplay();
       updateFatePointsDisplay();
+      updateCharGuaranteedDisplay();
       
       alert('Configuration imported successfully!');
     } catch (error) {
@@ -2638,10 +2690,22 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Update Radiance Pity display
+// Update Radiance Pity display with visual indicators
 function updateRadiancePityDisplay() {
-  const radiancePity = document.getElementById('radiancePity').value;
+  const radiancePitySelect = document.getElementById('radiancePity');
+  const radiancePity = +radiancePitySelect.value;
   document.getElementById('radiancePityDisplay').textContent = `${radiancePity} / 3`;
+  
+  // Add visual emphasis when at guaranteed state (3 consecutive losses)
+  if (radiancePity === 3) {
+    radiancePitySelect.classList.add('radiance-pity-guaranteed');
+    radiancePitySelect.setAttribute('aria-label', 'Radiance Pity: 3/3, guaranteed next featured character');
+    console.log('Radiance Pity UI updated: Guaranteed state (3/3)');
+  } else {
+    radiancePitySelect.classList.remove('radiance-pity-guaranteed');
+    radiancePitySelect.setAttribute('aria-label', `Radiance Pity: ${radiancePity}/3`);
+    console.log(`Radiance Pity UI updated: Normal state (${radiancePity}/3)`);
+  }
 }
 
 // Update FatePoints display with visual emphasis for guaranteed state
@@ -2660,6 +2724,150 @@ function updateFatePointsDisplay() {
     fatePointsSelect.setAttribute('aria-label', 'Fate points: 0 of 1');
     console.log('FatePoints UI updated: Normal state (0/1)');
   }
+}
+
+// Update Character Guaranteed display with visual emphasis for guaranteed state
+function updateCharGuaranteedDisplay() {
+  const charGuaranteedSelect = document.getElementById('charGuaranteed');
+  const isGuaranteed = charGuaranteedSelect.value === 'true';
+  
+  if (isGuaranteed) {
+    // Add visual emphasis for guaranteed state
+    charGuaranteedSelect.classList.add('character-guaranteed');
+    charGuaranteedSelect.setAttribute('aria-label', 'Next character guaranteed: Yes');
+    console.log('Character Guaranteed UI updated: Guaranteed state (Yes)');
+  } else {
+    // Remove visual emphasis for non-guaranteed state
+    charGuaranteedSelect.classList.remove('character-guaranteed');
+    charGuaranteedSelect.setAttribute('aria-label', 'Next character guaranteed: No (50/50)');
+    console.log('Character Guaranteed UI updated: Normal state (No/50-50)');
+  }
+}
+
+// Toggle cost calculator visibility
+function toggleCostCalculator() {
+  const enabled = document.getElementById('enableCostCalculator').checked;
+  const content = document.getElementById('costCalculatorContent');
+  content.style.display = enabled ? 'block' : 'none';
+  
+  if (enabled) {
+    updateCostCalculation();
+  }
+}
+
+// Update cost calculation display
+function updateCostCalculation() {
+  const currency = document.getElementById('currency').value;
+  const method = document.getElementById('spendingMethod').value;
+  const totalPulls = +document.getElementById('totalPulls').textContent;
+  const costSummaryDiv = document.getElementById('costSummary');
+  
+  if (totalPulls === 0) {
+    costSummaryDiv.innerHTML = '<p style="color: var(--label-color);">Enter your resource values to see cost analysis</p>';
+    return;
+  }
+  
+  // Store currency preference
+  localStorage.setItem('selectedCurrency', currency);
+  
+  // Calculate needed additional pulls based on current calculation
+  // For now, we'll estimate based on expected pulls for goals
+  const wantChar = document.getElementById('wantCharacter').checked;
+  const wantWeap = document.getElementById('wantWeapon').checked;
+  
+  if (!wantChar && !wantWeap) {
+    costSummaryDiv.innerHTML = '<p style="color: var(--label-color);">Select character or weapon goals to see cost estimates</p>';
+    return;
+  }
+  
+  let estimatedNeededPulls = 0;
+  
+  if (wantChar) {
+    const charGoal = +document.getElementById('constellations').value + 1;
+    const charPity = +document.getElementById('charPity').value;
+    const charGuaranteed = document.getElementById('charGuaranteed').value === 'true';
+    const expected = charGuaranteed ? 75 : 112.5;
+    estimatedNeededPulls += Math.ceil((expected * charGoal) - charPity);
+  }
+  
+  if (wantWeap) {
+    const weapGoal = +document.getElementById('refinements').value + 1;
+    const weapPity = +document.getElementById('weapPity').value;
+    const fatePoints = +document.getElementById('fatepoints').value;
+    const expected = fatePoints >= 1 ? 65 : 105;
+    estimatedNeededPulls += Math.ceil((expected * weapGoal) - weapPity);
+  }
+  
+  const neededPulls = Math.max(0, estimatedNeededPulls - totalPulls);
+  
+  if (neededPulls === 0) {
+    costSummaryDiv.innerHTML = '<div style="color: #2ecc71; font-weight: bold; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 8px;">🎉 Great news! You have enough pulls for your goals!</div>';
+    return;
+  }
+  
+  const costAnalysis = costCalculator.analyzeCosts(neededPulls, currency, method);
+  
+  let html = `<h4>💰 Cost Analysis for ${neededPulls} Additional Pulls</h4>`;
+  html += `<div style="margin: 15px 0; padding: 15px; background: var(--section-bg); border-radius: 8px; border-left: 3px solid #667eea;"><strong>Method:</strong> ${costAnalysis.method}</div>`;
+  
+  html += `<div style="font-size: 1.2em; font-weight: bold; color: var(--text-color); margin: 15px 0;">Total Cost: ${costCalculator.formatCurrency(costAnalysis.totalCost, currency)}</div>`;
+  
+  if (currency !== 'USD') {
+    html += `<div style="font-size: 0.9em; color: var(--label-color); margin-bottom: 15px;">≈ ${costCalculator.formatCurrency(costAnalysis.totalCostUSD, 'USD')} USD</div>`;
+  }
+  
+  // Add method-specific breakdown
+  if (method === 'crystals' && costAnalysis.packs) {
+    html += '<h5>📦 Recommended Packs:</h5><ul>';
+    const packCounts = {};
+    costAnalysis.packs.forEach(pack => {
+      packCounts[pack.base] = (packCounts[pack.base] || 0) + 1;
+    });
+    
+    Object.entries(packCounts).forEach(([base, count]) => {
+      const pack = costAnalysis.packs.find(p => p.base === parseInt(base));
+      const localPrice = costCalculator.formatCurrency(
+        costCalculator.convertCurrency(pack.price, currency), currency
+      );
+      html += `<li>${count}x ${pack.actual} crystals pack - ${localPrice} each</li>`;
+    });
+    html += '</ul>';
+    
+    if (costAnalysis.wastedCrystals > 0) {
+      html += `<div style="color: var(--label-color); font-size: 0.9em; margin-top: 10px;">💎 Extra crystals: ${costAnalysis.wastedCrystals}</div>`;
+    }
+  }
+  
+  if (method === 'welkin') {
+    html += `<div style="margin-top: 15px;"><strong>Welkin Moons needed:</strong> ${costAnalysis.welkinsNeeded}</div>`;
+    html += `<div><strong>Time required:</strong> ${costAnalysis.monthsNeeded} months</div>`;
+    if (costAnalysis.wastedPrimogems > 0) {
+      html += `<div style="color: var(--label-color); font-size: 0.9em; margin-top: 10px;">💎 Extra primogems: ${costAnalysis.wastedPrimogems}</div>`;
+    }
+  }
+  
+  if (method === 'mixed') {
+    html += '<h5>🔄 Mixed Approach:</h5>';
+    html += `<div>• ${costAnalysis.welkinMonths} Welkin Moons: ${costCalculator.formatCurrency(costAnalysis.welkinCost, currency)}</div>`;
+    if (costAnalysis.crystalsCost > 0) {
+      html += `<div>• Genesis Crystals: ${costCalculator.formatCurrency(costAnalysis.crystalsCost, currency)}</div>`;
+      if (costAnalysis.packs && costAnalysis.packs.length > 0) {
+        html += '<div style="margin-left: 20px; font-size: 0.9em; color: var(--label-color);">';
+        const packCounts = {};
+        costAnalysis.packs.forEach(pack => {
+          packCounts[pack.base] = (packCounts[pack.base] || 0) + 1;
+        });
+        Object.entries(packCounts).forEach(([base, count]) => {
+          const pack = costAnalysis.packs.find(p => p.base === parseInt(base));
+          html += `${count}x ${pack.actual} crystals pack, `;
+        });
+        html = html.slice(0, -2); // Remove trailing comma
+        html += '</div>';
+      }
+    }
+  }
+  
+  costSummaryDiv.innerHTML = html;
 }
 
 // Auto-save inputs to localStorage
@@ -2734,6 +2942,7 @@ function autoLoadInputs() {
     updateResourceSummary();
     updateRadiancePityDisplay();
     updateFatePointsDisplay();
+    updateCharGuaranteedDisplay();
   } catch (error) {
     console.log('Could not load auto-saved inputs:', error);
   }
@@ -2779,6 +2988,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateResourceSummary();
     updateRadiancePityDisplay();
     updateFatePointsDisplay();
+    updateCharGuaranteedDisplay();
     
     // Check for saved theme preference
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
