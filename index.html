@@ -1331,6 +1331,18 @@
     <div id="results"></div>
 
     <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+        <h3 style="margin: 0;">Probability Chart</h3>
+        <div class="chart-toggle-container" style="display: flex; align-items: center; gap: 15px;">
+          <span style="color: var(--label-color); font-weight: 600;">Chart Type:</span>
+          <div class="chart-toggle-switch">
+            <input type="radio" id="chartCharacter" name="chartType" value="character" checked onchange="updateChart()">
+            <label for="chartCharacter" style="margin: 0 8px 0 4px; font-weight: 500;">Character</label>
+            <input type="radio" id="chartWeapon" name="chartType" value="weapon" onchange="updateChart()">
+            <label for="chartWeapon" style="margin: 0 0 0 4px; font-weight: 500;">Weapon</label>
+          </div>
+        </div>
+      </div>
       <div class="chart-container">
         <canvas id="resultsChart"></canvas>
       </div>
@@ -2508,8 +2520,15 @@ function generateCSV(results) {
   return csv;
 }
 
-// Enhanced chart creation with error handling
+// Enhanced cumulative probability chart creation with Character/Weapon toggle support
 function createChart(simResults) {
+  // Store simulation results globally for chart updates
+  window.lastChartSimResults = simResults;
+  updateChart();
+}
+
+// New function to update chart based on toggle selection
+function updateChart() {
   try {
     // Check if Chart.js is available
     if (typeof Chart === 'undefined') {
@@ -2529,122 +2548,320 @@ function createChart(simResults) {
       return;
     }
     
-    // Store results for export
-    lastSimulationResults = simResults;
-    document.getElementById('exportResultsBtn').disabled = false;
-    
     // Destroy existing chart if it exists
     if (window.resultsChartInstance) {
       window.resultsChartInstance.destroy();
     }
     
-    // Create histogram data from simulation results
-    const pullsData = simResults.results.filter(r => r.success).map(r => r.totalPullsUsed);
+    // Get selected chart type
+    const chartType = document.querySelector('input[name="chartType"]:checked')?.value || 'character';
+    const wantChar = document.getElementById('wantCharacter').checked;
+    const wantWeap = document.getElementById('wantWeapon').checked;
     
-    if (pullsData.length === 0) {
-      console.log('No successful pulls to chart');
+    // Check if the selected chart type has goals
+    if (chartType === 'character' && !wantChar) {
+      displayNoDataMessage('No character goals selected. Please select character goals to view this chart.');
+      return;
+    }
+    if (chartType === 'weapon' && !wantWeap) {
+      displayNoDataMessage('No weapon goals selected. Please select weapon goals to view this chart.');
       return;
     }
     
-    if (pullsData.length < 2) {
-      console.log('Insufficient data for histogram');
+    // Get total pulls and calculate dynamic X-axis max with padding
+    const totalPulls = +document.getElementById('totalPulls').textContent || 0;
+    const maxPulls = Math.max(200, totalPulls + 50); // Dynamic max with padding
+    const datasets = [];
+    
+    // Colors for constellations/refinements - matching reference site style
+    const colors = [
+      '#FF6384', // C0/R1 - Pink/Red
+      '#36A2EB', // C1/R2 - Blue  
+      '#FFCE56', // C2/R3 - Yellow
+      '#4BC0C0', // C3/R4 - Teal
+      '#9966FF', // C4/R5 - Purple
+      '#FF9F40', // C5 - Orange
+      '#C7C7C7'  // C6 - Gray
+    ];
+    
+    let maxLevel, banner, pity, guaranteed, fatePoints, radiancePity, numSims;
+    
+    if (chartType === 'character') {
+      maxLevel = Math.min(6, +document.getElementById('constellations').value);
+      banner = 'character';
+      pity = Math.max(0, Math.min(89, +document.getElementById('charPity').value || 0));
+      guaranteed = document.getElementById('charGuaranteed').value === 'true';
+      fatePoints = 0;
+      radiancePity = +document.getElementById('radiancePity').value || 0;
+      numSims = 8000; // Reduced for performance
+    } else {
+      maxLevel = Math.min(4, +document.getElementById('refinements').value);
+      banner = 'weapon';
+      pity = Math.max(0, Math.min(79, +document.getElementById('weapPity').value || 0));
+      guaranteed = false;
+      fatePoints = +document.getElementById('fatepoints').value || 0;
+      radiancePity = 0;
+      numSims = 8000;
+    }
+    
+    // Calculate cumulative probabilities for each level
+    for (let level = 0; level <= maxLevel; level++) {
+      const goal = level + 1; // C0/R1 = 1 copy, C1/R2 = 2 copies, etc.
+      
+      let simResults;
+      if (chartType === 'character') {
+        simResults = calculator.runCombinedSimulation(
+          goal, pity, guaranteed, 0, 0, 0, maxPulls + 100, numSims, radiancePity
+        );
+      } else {
+        simResults = calculator.runCombinedSimulation(
+          0, 0, false, goal, pity, fatePoints, maxPulls + 100, numSims, 0
+        );
+      }
+      
+      // Extract successful pulls data
+      const pullsData = simResults.results
+        .filter(r => chartType === 'character' ? r.charSuccess : r.weapSuccess)
+        .map(r => r.totalPullsUsed)
+        .sort((a, b) => a - b);
+      
+      if (pullsData.length === 0) continue;
+      
+      // Create cumulative probability data points with natural line endings
+      const cumulativeData = [];
+      let dataIndex = 0;
+      const stepSize = 5; // Smaller steps for smoother lines
+      
+      for (let pulls = 0; pulls <= maxPulls; pulls += stepSize) {
+        // Count successful runs using <= this many pulls
+        while (dataIndex < pullsData.length && pullsData[dataIndex] <= pulls) {
+          dataIndex++;
+        }
+        
+        // Calculate cumulative probability
+        const cumulativeProbability = (dataIndex / pullsData.length) * 100;
+        cumulativeData.push({ x: pulls, y: cumulativeProbability });
+        
+        // Stop adding points if we've reached near 100% to allow natural line ending
+        if (cumulativeProbability >= 99.8 && pulls > totalPulls) {
+          break;
+        }
+      }
+      
+      const label = chartType === 'character' ? `C${level}` : `R${level + 1}`;
+      const description = chartType === 'character' && level === 0 ? ' (Base Character)' : 
+                         chartType === 'weapon' && level === 0 ? ' (Base Weapon)' : '';
+      
+      datasets.push({
+        label: label + description,
+        data: cumulativeData,
+        borderColor: colors[level],
+        backgroundColor: colors[level] + '20',
+        borderWidth: 3,
+        fill: false,
+        stepped: true,
+        tension: 0,
+        pointRadius: 0,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: colors[level],
+        pointHoverBorderColor: '#ffffff',
+        pointHoverBorderWidth: 2
+      });
+    }
+    
+    if (datasets.length === 0) {
+      displayNoDataMessage('No data available for chart creation.');
       return;
     }
     
-    // Find min and max for binning
-    const min = Math.min(...pullsData);
-    const max = Math.max(...pullsData);
-    
-    if (min === max) {
-      console.log('All data points are identical, cannot create histogram');
-      return;
-    }
-    
-    // Create bins (10 bins between min and max)
-    const binSize = Math.ceil((max - min) / 10) || 1;
-    const bins = Array.from({length: 10}, (_, i) => min + i * binSize);
-    
-    // Count pulls in each bin
-    const counts = Array(bins.length).fill(0);
-    pullsData.forEach(pulls => {
-      const binIndex = Math.min(Math.floor((pulls - min) / binSize), bins.length - 1);
-      counts[binIndex]++;
-    });
-    
-    // Convert counts to percentages
-    const percentages = counts.map(count => (count / pullsData.length) * 100);
-    
-    // Create labels for x-axis
-    const labels = bins.map((bin, i) => 
-      i < bins.length - 1 ? 
-      `${bin}-${bin + binSize - 1}` : 
-      `${bin}+`
-    );
-    
-    // Check if dark mode is active
+    // Check theme colors
     const isDarkMode = document.body.classList.contains('dark-mode');
     const textColor = isDarkMode ? '#e1e1e1' : '#333';
+    const labelColor = isDarkMode ? '#bbb' : '#666';
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
     
     // Create the chart
     window.resultsChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Distribution of Pulls Needed',
-          data: percentages,
-          backgroundColor: 'rgba(102, 126, 234, 0.6)',
-          borderColor: 'rgba(102, 126, 234, 1)',
-          borderWidth: 1
-        }]
-      },
+      type: 'line',
+      data: { datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
         plugins: {
           title: {
             display: true,
-            text: 'Distribution of Pulls Needed for Success',
+            text: `Cumulative Probability - ${chartType.charAt(0).toUpperCase() + chartType.slice(1)} Banner`,
             color: textColor,
-            font: {
-              size: 16
-            }
+            font: { size: 18, weight: 'bold' },
+            padding: { top: 10, bottom: 20 }
           },
           legend: {
-            display: false
+            display: true,
+            position: 'top',
+            align: 'center',
+            labels: {
+              color: textColor,
+              usePointStyle: true,
+              padding: 15,
+              font: { size: 13, weight: '500' }
+            }
           },
           tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+            borderColor: colors[0],
+            borderWidth: 2,
+            cornerRadius: 8,
+            displayColors: true,
             callbacks: {
+              title: function(context) {
+                return `${context[0].parsed.x} pulls`;
+              },
               label: function(context) {
-                return `${context.raw.toFixed(1)}% of successful attempts`;
+                return `${context.dataset.label.replace(' (Base Character)', '').replace(' (Base Weapon)', '')}: ${context.parsed.y.toFixed(1)}%`;
+              },
+              afterBody: function(context) {
+                if (context.length > 0) {
+                  const pulls = context[0].parsed.x;
+                  if (Math.abs(pulls - totalPulls) <= 10) {
+                    return [``, `≈ Your current resources: ${totalPulls} pulls`];
+                  }
+                }
+                return [];
               }
             }
           }
         },
         scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { color: textColor },
+          x: {
+            type: 'linear',
+            position: 'bottom',
+            min: 0,
+            max: maxPulls,
             title: {
               display: true,
-              text: 'Percentage of Successful Attempts',
-              color: textColor
+              text: 'Total Number of Pulls',
+              color: textColor,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: {
+              color: labelColor,
+              stepSize: Math.max(25, Math.floor(maxPulls / 12)),
+              font: { size: 11 },
+              callback: function(value) {
+                return value.toString();
+              }
+            },
+            grid: {
+              color: gridColor,
+              lineWidth: 1,
+              drawBorder: true
             }
           },
-          x: {
-            ticks: { color: textColor },
+          y: {
+            min: 0,
+            max: 100,
             title: {
               display: true,
-              text: 'Number of Pulls',
-              color: textColor
+              text: 'Cumulative Probability (%)',
+              color: textColor,
+              font: { size: 14, weight: 'bold' }
+            },
+            ticks: {
+              color: labelColor,
+              stepSize: 10,
+              font: { size: 11 },
+              callback: function(value) {
+                return value + '%';
+              }
+            },
+            grid: {
+              color: gridColor,
+              lineWidth: 1,
+              drawBorder: true
             }
           }
+        },
+        elements: {
+          point: { radius: 0, hoverRadius: 6 },
+          line: { borderWidth: 3 }
+        },
+        animation: {
+          duration: 1200,
+          easing: 'easeOutQuart'
         }
       }
     });
+    
+    // Add vertical line for current resources if within chart range
+    if (totalPulls > 0 && totalPulls <= maxPulls) {
+      setTimeout(() => addResourceLine(totalPulls, isDarkMode), 100);
+    }
+    
   } catch (error) {
     console.error('Error creating chart:', error);
+    displayNoDataMessage('Chart failed to load due to an error.');
   }
+}
+
+// Helper function to display messages when no chart data is available
+function displayNoDataMessage(message) {
+  const canvas = document.getElementById('resultsChart');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Display message
+  ctx.fillStyle = isDarkMode ? '#bbb' : '#666';
+  ctx.font = '16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+}
+
+// Helper function to add resource line annotation
+function addResourceLine(totalPulls, isDarkMode) {
+  const chart = window.resultsChartInstance;
+  if (!chart) return;
+  
+  const originalDraw = chart.draw;
+  chart.draw = function() {
+    originalDraw.call(this);
+    
+    const ctx = this.ctx;
+    const chartArea = this.chartArea;
+    const xScale = this.scales.x;
+    
+    if (totalPulls > xScale.min && totalPulls < xScale.max) {
+      ctx.save();
+      ctx.strokeStyle = isDarkMode ? '#FFD700' : '#FF6500';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      
+      const xPos = xScale.getPixelForValue(totalPulls);
+      ctx.beginPath();
+      ctx.moveTo(xPos, chartArea.top);
+      ctx.lineTo(xPos, chartArea.bottom);
+      ctx.stroke();
+      
+      // Add label
+      ctx.fillStyle = isDarkMode ? '#FFD700' : '#FF6500';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.setLineDash([]);
+      ctx.fillText(`Your pulls: ${totalPulls}`, xPos, chartArea.top - 8);
+      
+      ctx.restore();
+    }
+  };
 }
 
 // Modal functions
