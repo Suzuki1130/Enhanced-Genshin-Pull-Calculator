@@ -1140,12 +1140,12 @@
         Made by Harry
       </div>
       <div class="version-info" style="text-align: center; font-size: 0.8em; margin-bottom: 20px; color: var(--credits-color);">
-        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;"><i class="fas fa-history" style="margin-right: 5px;"></i>Version 6.0</a>
+        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;"><i class="fas fa-history" style="margin-right: 5px;"></i>Version 5.8</a>
       </div>
 
     <div class="section">
       <h3>Resources</h3>
-      <div class="input-group">067
+      <div class="input-group">
         <div>
           <label for="primos">Primogems:</label>
           <input type="number" id="primos" value="0" min="0" max="999999" step="1" oninput="validateAndUpdateResources(this)">
@@ -1308,14 +1308,18 @@
         <div>
           <label for="luckMode">Analysis Mode:</label>
           <select id="luckMode">
-            <option value="simulation" selected>Monte Carlo Simulation</option>
+            <option value="simulation">Monte Carlo Simulation</option>
+            <option value="scenarios">Luck Scenarios</option>
+            <option value="both" selected>Both</option>
           </select>
         </div>
       </div>
 
       <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; font-size: 14px; line-height: 1.5;">
-        <h4 style="margin: 0 0 10px 0; color: #333;">Analysis Mode Explanation:</h4>
+        <h4 style="margin: 0 0 10px 0; color: #333;">Analysis Mode Explanations:</h4>
         <p><strong>Monte Carlo Simulation:</strong> Runs thousands of random pull sessions to calculate realistic probability distributions. This method accounts for the randomness of gacha mechanics and provides statistical confidence intervals.</p>
+        <p><strong>Luck Scenarios:</strong> Shows deterministic calculations for best-case (win all 50/50s), worst-case (lose all 50/50s), and expected outcomes. Useful for planning and budgeting.</p>
+        <p><strong>Both:</strong> Combines simulation results with scenario analysis for comprehensive insights into your pulling strategy.</p>
       </div>
     </div>
 
@@ -1372,21 +1376,6 @@
       <div class="modal-content">
         <span class="close" onclick="closeChangelogModal()">&times;</span>
         <h2 style="color: var(--text-color); margin-top: 0;">Changelog</h2>
-        
-        <div class="changelog-item">
-          <div class="changelog-version">Version 6.0</div>
-          <div class="changelog-date">September 2025</div>
-          <div class="changelog-changes">
-            <ul>
-              <li>💰 Added Stardust and Starglitter tracking to simulations</li>
-              <li>🔄 Added shop conversion calculations (Stardust/Starglitter to Fates)</li>
-              <li>📊 Added new data series to Monte Carlo results chart</li>
-              <li>🧮 Simplified analysis by removing Luck Scenarios mode</li>
-              <li>📈 Added effective pull discount calculation</li>
-              <li>🔧 Various performance improvements and bug fixes</li>
-            </ul>
-          </div>
-        </div>
         
         <div class="changelog-item">
           <div class="changelog-version">Version 5.8</div>
@@ -1873,14 +1862,12 @@ class GenshinCalculator {
     let pity = currentPity, guaranteed = isGuaranteed, weaponPoints = fatePoints;
     let currentRadiancePity = radiancePity;
     let pullsUsed = 0, fiveStarsObtained = 0, targetObtained = 0;
-    let stardust = 0, starglitter = 0;
     
     while (targetObtained < goal && pullsUsed < availablePulls) {
       pullsUsed++;
       pity++;
       const pullProb = this.getPullProbability(pity - 1, banner);
       const gotFiveStar = Math.random() < pullProb;
-      const gotFourStar = !gotFiveStar && (pity % 10 === 0 || Math.random() < 0.051); // Guaranteed 4★ at 10 pity or ~5.1% chance
       
       if (gotFiveStar) {
         fiveStarsObtained++;
@@ -1892,7 +1879,6 @@ class GenshinCalculator {
             targetObtained++; 
             guaranteed = false;
             currentRadiancePity = 0; // Reset on guarantee
-            // No extra starglitter for new character
           } else {
             // Apply Radiance Pity modified chances
             const effectiveWinRate = this.getRadianceWinRate(currentRadiancePity);
@@ -1903,14 +1889,11 @@ class GenshinCalculator {
               targetObtained++; 
               guaranteed = false;
               currentRadiancePity = 0; // Reset on win
-              // No extra starglitter for new character
             } else {
               // Lost the modified 50/50, got standard character
               // Standard loss, next is guaranteed and increment Radiance Pity
               guaranteed = true;
               currentRadiancePity = Math.min(3, currentRadiancePity + 1);
-              // Standard 5★ character gives starglitter (assuming already owned)
-              starglitter += 10; // 5★ character duplicate gives 10 starglitter
             }
           }
         } else {
@@ -1919,27 +1902,18 @@ class GenshinCalculator {
             // Already guaranteed by Epitomized Path
             targetObtained++;
             weaponPoints = 0; // Reset after getting guaranteed weapon
-            starglitter += 10; // 5★ weapon gives 10 starglitter
           } else {
             // Roll for weapon (66.7% chance for target weapon)
             if (Math.random() < 2/3) {
               // Got target weapon
               targetObtained++;
               weaponPoints = 0; // Reset on success
-              starglitter += 10; // 5★ weapon gives 10 starglitter
             } else {
               // Got non-target weapon, increment FatePoints
               weaponPoints = 1; // Set to 1 (next pull guaranteed)
-              starglitter += 10; // 5★ weapon gives 10 starglitter
             }
           }
         }
-      } else if (gotFourStar) {
-        // 4★ item (character or weapon)
-        starglitter += 2; // 4★ character/weapon gives 2 starglitter
-      } else {
-        // 3★ weapon
-        stardust += 15; // 3★ weapon gives 15 stardust
       }
     }
     
@@ -1950,45 +1924,31 @@ class GenshinCalculator {
       finalPity: pity,
       finalGuaranteed: guaranteed,
       finalWeaponPoints: weaponPoints,
-      finalRadiancePity: currentRadiancePity,
-      stardust,
-      starglitter
+      finalRadiancePity: currentRadiancePity
     };
   }
 
   simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, radiancePity = 0) {
     let totalPullsUsed = 0, charObtained = 0, weapObtained = 0;
     let charSuccess = false, weapSuccess = false;
-    let totalStardust = 0, totalStarglitter = 0;
-    let charResult = {stardust: 0, starglitter: 0};
-    let weapResult = {stardust: 0, starglitter: 0};
     
     if (charGoal > 0) {
-      charResult = this.simulateSession('character', charGoal, charPity, charGuaranteed, 0, availablePulls, radiancePity);
+      const charResult = this.simulateSession('character', charGoal, charPity, charGuaranteed, 0, availablePulls, radiancePity);
       charObtained = charResult.fiveStarsObtained;
       totalPullsUsed += charResult.pullsUsed;
       charSuccess = charResult.success;
-      totalStardust += charResult.stardust;
-      totalStarglitter += charResult.starglitter;
     } else {
       charSuccess = true; // No character goal means automatic success
     }
     
     if (weapGoal > 0 && totalPullsUsed < availablePulls) {
-      weapResult = this.simulateSession('weapon', weapGoal, weapPity, false, fatePoints, availablePulls - totalPullsUsed, 0);
+      const weapResult = this.simulateSession('weapon', weapGoal, weapPity, false, fatePoints, availablePulls - totalPullsUsed, 0);
       weapObtained = weapResult.fiveStarsObtained;
       totalPullsUsed += weapResult.pullsUsed;
       weapSuccess = weapResult.success;
-      totalStardust += weapResult.stardust;
-      totalStarglitter += weapResult.starglitter;
     } else if (weapGoal === 0) {
       weapSuccess = true; // No weapon goal means automatic success
     }
-    
-    // Calculate how many extra fates can be bought from shops
-    const stardustFates = Math.min(Math.floor(totalStardust / 75), 5); // Max 5 per month from Stardust shop
-    const starglitterFates = Math.floor(totalStarglitter / 5); // Unlimited from Starglitter shop
-    const totalExtraFates = stardustFates + starglitterFates;
     
     return {
       success: charSuccess && weapSuccess,
@@ -1996,38 +1956,21 @@ class GenshinCalculator {
       charObtained,
       weapObtained,
       charSuccess,
-      weapSuccess,
-      totalStardust,
-      totalStarglitter,
-      stardustFates,
-      starglitterFates,
-      totalExtraFates
+      weapSuccess
     };
   }
 
   runCombinedSimulation(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, numSims, radiancePity = 0) {
     const results = [];
     let fullSuccess = 0, charSuccess = 0, weapSuccess = 0;
-    let totalStardust = 0, totalStarglitter = 0, totalExtraFates = 0;
-    
     for (let i = 0; i < numSims; i++) {
       const res = this.simulateCombinedSession(charGoal, charPity, charGuaranteed, weapGoal, weapPity, fatePoints, availablePulls, radiancePity);
       results.push(res);
-      if (res.success) {
-        fullSuccess++;
-        totalStardust += res.totalStardust;
-        totalStarglitter += res.totalStarglitter;
-        totalExtraFates += res.totalExtraFates;
-      }
+      if (res.success) fullSuccess++;
       if (res.charSuccess || charGoal === 0) charSuccess++;
       if (res.weapSuccess || weapGoal === 0) weapSuccess++;
     }
-    
     const successful = results.filter(r => r.success).map(r => r.totalPullsUsed);
-    const successfulStardust = results.filter(r => r.success).map(r => r.totalStardust);
-    const successfulStarglitter = results.filter(r => r.success).map(r => r.totalStarglitter);
-    const successfulExtraFates = results.filter(r => r.success).map(r => r.totalExtraFates);
-    
     return {
       fullSuccessRate: fullSuccess / numSims,
       charSuccessRate: charSuccess / numSims,
@@ -2035,12 +1978,6 @@ class GenshinCalculator {
       averagePulls: successful.length ? successful.reduce((a,b)=>a+b)/successful.length : 0,
       medianPulls: successful.length ? this.median(successful) : 0,
       percentile90: successful.length ? this.percentile(successful, 0.9) : 0,
-      averageStardust: successful.length ? successfulStardust.reduce((a,b)=>a+b)/successful.length : 0,
-      medianStardust: successful.length ? this.median(successfulStardust) : 0,
-      averageStarglitter: successful.length ? successfulStarglitter.reduce((a,b)=>a+b)/successful.length : 0,
-      medianStarglitter: successful.length ? this.median(successfulStarglitter) : 0,
-      averageExtraFates: successful.length ? successfulExtraFates.reduce((a,b)=>a+b)/successful.length : 0,
-      medianExtraFates: successful.length ? this.median(successfulExtraFates) : 0,
       percentile10: successful.length ? this.percentile(successful, 0.1) : 0,
       results
     };
@@ -2183,12 +2120,13 @@ async function calculate() {
 
   let output = '<div class="results">';
   
-  const simResults = calculator.runCombinedSimulation(
-    charGoal, charPity, charGuaranteed,
-    weapGoal, weapPity, fatePoints, totalPulls, numSims, radiancePity
-  );
+  if (mode === 'simulation' || mode === 'both') {
+    const simResults = calculator.runCombinedSimulation(
+      charGoal, charPity, charGuaranteed,
+      weapGoal, weapPity, fatePoints, totalPulls, numSims, radiancePity
+    );
 
-  output += '<h3>Monte Carlo Simulation Results</h3>';
+    output += '<h3>Monte Carlo Simulation Results</h3>';
     if (wantChar) {
       output += `<p>Character Success Rate: ${(simResults.charSuccessRate * 100).toFixed(1)}%</p>`;
     }
@@ -2207,19 +2145,114 @@ async function calculate() {
       output += `<li>10th percentile (Lucky): ${Math.round(simResults.percentile10)}</li>`;
       output += `<li>90th percentile (Unlucky): ${Math.round(simResults.percentile90)}</li>`;
       output += `</ul>`;
-      
-      output += `<h4>Currency Rewards</h4>`;
-      output += `<ul>`;
-      output += `<li>Average Stardust: ${Math.round(simResults.averageStardust)}</li>`;
-      output += `<li>Average Starglitter: ${simResults.averageStarglitter.toFixed(1)}</li>`;
-      output += `<li>Extra Fates from Shop: ${simResults.averageExtraFates.toFixed(1)}</li>`;
-      output += `<li>Effective Pull Discount: ${(simResults.averageExtraFates / simResults.averagePulls * 100).toFixed(1)}%</li>`;
-      output += `</ul>`;
     }
     
     // Create chart for simulation results
     createChart(simResults);
-  
+  }
+
+  if (mode === 'scenarios' || mode === 'both') {
+    const scenarios = calculator.calculateCombinedScenarios(
+      charGoal, charPity, charGuaranteed,
+      weapGoal, weapPity, fatePoints
+    );
+
+    output += '<h3>Luck Scenarios</h3>';
+    if (wantChar) {
+      output += '<h4>Character Banner</h4>';
+      output += `<ul>`;
+      output += `<li>Best case (win all 50/50): ${scenarios.charBest} pulls</li>`;
+      output += `<li>Expected case: ${scenarios.charExpected} pulls</li>`;
+      output += `<li>Worst case (lose all 50/50): ${scenarios.charWorst} pulls</li>`;
+      output += `</ul>`;
+      
+      // Add personalized progress messages for character banner
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 3px solid #667eea;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #667eea;">📊 Your Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.charBest) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.charBest} more than needed! Great job saving up!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.charBest - totalPulls} more pulls to reach the best case scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.charExpected) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.charExpected} pulls ahead! Excellent preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.charExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.charWorst) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.charWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
+      }
+      output += '</div>';
+    }
+    if (wantWeap) {
+      output += '<h4>Weapon Banner</h4>';
+      output += `<ul>`;
+      output += `<li>Best case: ${scenarios.weapBest} pulls</li>`;
+      output += `<li>Expected case: ${scenarios.weapExpected} pulls</li>`;
+      output += `<li>Worst case: ${scenarios.weapWorst} pulls</li>`;
+      output += `</ul>`;
+      
+      // Add personalized progress messages for weapon banner
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(118, 75, 162, 0.1); border-radius: 8px; border-left: 3px solid #764ba2;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #764ba2;">⚔️ Your Weapon Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.weapBest) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.weapBest} more than needed! Great job saving up!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.weapBest - totalPulls} more pulls to reach the best case scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.weapExpected) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.weapExpected} pulls ahead! Excellent preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.weapExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.weapWorst) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.weapWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
+      }
+      output += '</div>';
+    }
+    if (wantChar && wantWeap) {
+      output += '<h4>Combined Total</h4>';
+      output += `<ul>`;
+      output += `<li>Best case: ${scenarios.combinedBest} pulls</li>`;
+      output += `<li>Expected case: ${scenarios.combinedExpected} pulls</li>`;
+      output += `<li>Worst case: ${scenarios.combinedWorst} pulls</li>`;
+      output += `</ul>`;
+      
+      // Add personalized progress messages for combined goals
+      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; border-left: 3px solid #a855f7;">';
+      output += '<h5 style="margin: 0 0 10px 0; color: #a855f7;">🎯 Combined Goals Progress Analysis</h5>';
+      
+      if (totalPulls >= scenarios.combinedBest) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.combinedBest} more than needed for both goals! Incredible planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.combinedBest - totalPulls} more pulls to get both character and weapon in the best case.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.combinedExpected) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.combinedExpected} pulls ahead for both goals! Masterful preparation!</p>`;
+      } else {
+        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.combinedExpected - totalPulls} more pulls to reach both goals in the expected scenario.</p>`;
+      }
+      
+      if (totalPulls >= scenarios.combinedWorst) {
+        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're completely safe even with terrible luck on both banners! Legendary planning!</p>`;
+      } else {
+        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.combinedWorst - totalPulls} more pulls to guarantee both goals even with the worst luck.</p>`;
+      }
+      output += '</div>';
+    }
+  }
+
   output += '</div>';
   document.getElementById('results').innerHTML = output;
   
@@ -2540,49 +2573,6 @@ function updateChart() {
     const maxPulls = Math.max(200, totalPulls + 50); // Dynamic max with padding
     const datasets = [];
     
-    // Helper function to create currency datasets
-    function createCurrencyDataset(data, label, colorIndex, property) {
-      if (data.length === 0) return;
-      
-      console.log(`Creating dataset for ${label} with property ${property}`);
-      console.log('Sample data:', data.slice(0, 3));
-      
-      // Create average currency data points
-      const currencyData = [];
-      const stepSize = 5;
-      const bucketSize = 20; // Group pulls in buckets for smoother averages
-      
-      for (let pulls = 0; pulls <= maxPulls; pulls += stepSize) {
-        // Find all data points in this bucket range
-        const bucket = data.filter(d => d.pulls >= pulls && d.pulls < pulls + bucketSize);
-        
-        if (bucket.length > 0) {
-          // Calculate average currency for this bucket
-          const avgCurrency = bucket.reduce((sum, item) => sum + item[property], 0) / bucket.length;
-          currencyData.push({ x: pulls, y: avgCurrency });
-        }
-      }
-      
-      // Only add dataset if we have data points
-      if (currencyData.length > 0) {
-        datasets.push({
-          label: label,
-          data: currencyData,
-          borderColor: colors[colorIndex],
-          backgroundColor: colors[colorIndex] + '20',
-          borderWidth: 3,
-          fill: false,
-          tension: 0.4,
-          pointRadius: 0,
-          pointHoverRadius: 6,
-          pointHoverBackgroundColor: colors[colorIndex],
-          pointHoverBorderColor: '#ffffff',
-          pointHoverBorderWidth: 2,
-          yAxisID: 'y1' // Use secondary y-axis
-        });
-      }
-    }
-    
     // Colors for constellations/refinements - matching reference site style
     const colors = [
       '#FF6384', // C0/R1 - Pink/Red
@@ -2591,10 +2581,7 @@ function updateChart() {
       '#4BC0C0', // C3/R4 - Teal
       '#9966FF', // C4/R5 - Purple
       '#FF9F40', // C5 - Orange
-      '#C7C7C7', // C6 - Gray
-      '#50C878', // Stardust - Emerald Green
-      '#FFD700', // Starglitter - Gold
-      '#00BFFF'  // Extra Fates - Deep Sky Blue
+      '#C7C7C7'  // C6 - Gray
     ];
     
     let maxLevel, banner, pity, guaranteed, fatePoints, radiancePity, numSims;
@@ -2637,32 +2624,6 @@ function updateChart() {
         .filter(r => chartType === 'character' ? r.charSuccess : r.weapSuccess)
         .map(r => r.totalPullsUsed)
         .sort((a, b) => a - b);
-        
-      // Extract currency data for level 0 (base character/weapon) only
-      if (level === 0) {
-        // Stardust data
-        const stardustData = simResults.results
-          .filter(r => chartType === 'character' ? r.charSuccess : r.weapSuccess)
-          .map(r => ({ pulls: r.totalPullsUsed, stardust: r.totalStardust }))
-          .sort((a, b) => a.pulls - b.pulls);
-          
-        // Starglitter data
-        const starglitterData = simResults.results
-          .filter(r => chartType === 'character' ? r.charSuccess : r.weapSuccess)
-          .map(r => ({ pulls: r.totalPullsUsed, starglitter: r.totalStarglitter }))
-          .sort((a, b) => a.pulls - b.pulls);
-          
-        // Extra Fates data
-        const extraFatesData = simResults.results
-          .filter(r => chartType === 'character' ? r.charSuccess : r.weapSuccess)
-          .map(r => ({ pulls: r.totalPullsUsed, extraFates: r.totalExtraFates }))
-          .sort((a, b) => a.pulls - b.pulls);
-          
-        // Create datasets for currency
-        createCurrencyDataset(stardustData, 'Stardust', 7, 'stardust');
-        createCurrencyDataset(starglitterData, 'Starglitter', 8, 'starglitter');
-        createCurrencyDataset(extraFatesData, 'Extra Fates', 9, 'extraFates');
-      }
       
       if (pullsData.length === 0) continue;
       
@@ -2729,51 +2690,6 @@ function updateChart() {
         interaction: {
           intersect: false,
           mode: 'index'
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Pulls',
-              color: labelColor
-            },
-            ticks: {
-              color: labelColor
-            },
-            grid: {
-              color: gridColor
-            }
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Probability (%)',
-              color: labelColor
-            },
-            min: 0,
-            max: 100,
-            ticks: {
-              color: labelColor
-            },
-            grid: {
-              color: gridColor
-            }
-          },
-          y1: {
-            position: 'right',
-            title: {
-              display: true,
-              text: 'Currency Amount',
-              color: labelColor
-            },
-            min: 0,
-            ticks: {
-              color: labelColor
-            },
-            grid: {
-              display: false
-            }
-          }
         },
         plugins: {
           title: {
