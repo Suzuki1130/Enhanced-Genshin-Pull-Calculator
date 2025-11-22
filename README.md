@@ -1,31 +1,66 @@
-# Enhanced Genshin Pull Calculator
+Enhanced Genshin Pull Calculator
 
-A stylish and powerful web app to calculate your chances and plan your pulls in **Genshin Impact**. This tool helps you track pity, simulate wish results, and estimate how many pulls you need to reach your goals.
+A modern, feature-rich web app designed to accurately calculate your pull probabilities and help you plan your wishes in Genshin Impact. Includes Radiance Pity support, Monte Carlo simulations, multilingual UI, and a fully redesigned interface.
 
-## 🌟 Features
+🌟 Features
 
-- 🎯 Set character constellation or weapon refinement goals  
-- 📊 Monte Carlo simulations and luck scenario calculations  
-- 📈 Visual charts for pull distribution  
-- 💾 Save and load configurations per user  
-- 🌙 Light/Dark theme toggle  
+🎯 Character constellation & weapon refinement goal tracking
 
-## 🔧 How It Works
+🎲 Monte Carlo simulation engine (up to 100,000 runs)
 
-1. Enter your available resources: Primogems, Fates, Genesis Crystals, Stardust  
-2. Choose your goals: Character or Weapon, pity values, guarantee status, etc.  
-3. Run the simulation to see probabilities and possible outcomes  
-4. View results in chart or scenario format  
-5. Save your config and come back anytime  
+🔮 Radiance Pity support (v5.0+ character banner mechanic)
 
-> **Note:** All data is stored locally in your browser. No server or account required.
+🗡️ Weapon banner Epitomized Path / Fate Points system
 
-## 🧠 Technology Used
+📊 Interactive probability charts using Chart.js
 
-- HTML, CSS, JavaScript  
-- Chart.js for visualizing simulation results  
-- LocalStorage for saving user data  
+📱 Fully responsive UI + mobile sidebar toggle
 
-## 🙌 Credits
+🌐 Multi-language support (EN / JP / ES / ZH / PT)
 
-Made by **Harry** | Improvements by **Warp**
+🧩 Automatic input persistence via localStorage
+
+✨ Modern dark UI with animations and tooltips
+
+🟣 Updated Starglitter pull conversion toggle (v6.1)
+
+🔧 How It Works
+
+Input your resources: Primogems, Fates, Genesis Crystals
+
+Enable or disable Starglitter for pulls
+
+Set your banner goals (character or weapon)
+
+Configure pity, guarantee status, Radiance Pity, or Fate Points
+
+Run the calculation to generate probabilities
+
+Analyze charts, projected pulls, and detailed results
+
+All data is stored locally. No accounts, no servers — fully browser-based.
+
+🧠 Tech Stack
+
+HTML, CSS, JavaScript
+
+Chart.js for probability graphs
+
+LocalStorage for user data persistence
+
+📝 Version 6.1 Updates
+
+📱 Added floating mobile sidebar toggle
+
+🟣 Replaced Stardust/Starglitter inputs with Starglitter-to-pulls button
+
+🧹 Removed Save/Load/Export configuration and CSV export
+
+🎲 Simplified analysis to Monte Carlo only
+
+🧪 Capped simulation runs at 100,000
+
+🙌 Credits
+
+Made by Harry
+Additional improvements by AI
