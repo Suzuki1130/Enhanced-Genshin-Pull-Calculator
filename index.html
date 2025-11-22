@@ -15,27 +15,16 @@
   </script>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --container-bg: rgba(255, 255, 255, 0.95);
-      --section-bg: rgba(255, 255, 255, 0.8);
-      --text-color: #333;
-      --label-color: #555;
-      --border-color: #e1e5e9;
-      --progress-bg: #e1e5e9;
-      --chart-bg: white;
-      --credits-color: #666;
-    }
-    
-    body.dark-mode {
-      --bg-gradient: linear-gradient(135deg, #1a1c2c 0%, #4a2c5d 100%);
-      --container-bg: rgba(30, 32, 44, 0.95);
-      --section-bg: rgba(40, 42, 54, 0.8);
-      --text-color: #e1e1e1;
-      --label-color: #bbb;
-      --border-color: #444;
-      --progress-bg: #444;
-      --chart-bg: #2a2c3a;
-      --credits-color: #aaa;
+      --bg-gradient: #0a0e1a;
+      --container-bg: #151923;
+      --section-bg: #1a1f2e;
+      --text-color: #ffffff;
+      --label-color: #b8bcc8;
+      --border-color: #2a3142;
+      --progress-bg: #2a3142;
+      --chart-bg: #1a1f2e;
+      --credits-color: #b8bcc8;
+      --accent-color: #5b8def;
     }
     
     body {
@@ -45,15 +34,14 @@
       margin: auto;
       background: var(--bg-gradient);
       min-height: 100vh;
-      transition: all 0.3s ease;
     }
 
     .container {
       background: var(--container-bg);
-      border-radius: 15px;
+      border-radius: 8px;
       padding: 30px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      transition: background 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-color);
     }
 
     h1 {
@@ -61,53 +49,56 @@
       color: var(--text-color);
       margin-bottom: 30px;
       font-size: 2.5em;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 600;
     }
 
     input, select {
-      padding: 12px;
+      padding: 10px 12px;
       margin: 8px 0;
-      border: 2px solid var(--border-color);
-      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
       font-size: 14px;
       width: 100%;
       box-sizing: border-box;
-      transition: border-color 0.3s;
-      background-color: var(--container-bg);
+      transition: border-color 0.2s, background-color 0.2s;
+      background-color: #0f1419;
       color: var(--text-color);
     }
 
     input:focus, select:focus {
-      border-color: #667eea;
+      border-color: var(--accent-color);
       outline: none;
+      background-color: #1a1f2e;
+    }
+
+    input:hover, select:hover {
+      border-color: #3a4152;
     }
 
     .section {
       margin: 20px 0;
       padding: 20px;
       background: var(--section-bg);
-      border-radius: 12px;
-      border-left: 4px solid #667eea;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      transition: background 0.3s ease;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .section h3 {
       margin-top: 0;
       color: var(--text-color);
-      font-size: 1.4em;
-      transition: color 0.3s ease;
+      font-size: 1.3em;
+      font-weight: 600;
+      margin-bottom: 18px;
     }
 
     label {
-      font-weight: 600;
+      font-weight: 500;
       display: block;
-      margin-top: 15px;
+      margin-top: 12px;
+      margin-bottom: 6px;
       color: var(--label-color);
-      transition: color 0.3s ease;
+      font-size: 14px;
     }
 
     .input-group {
@@ -118,33 +109,36 @@
     }
 
     button {
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: var(--accent-color);
       color: white;
       border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-size: 16px;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: background-color 0.2s, transform 0.1s;
       width: 100%;
       margin-top: 20px;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      background: #4a7de8;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     .results {
       background: var(--section-bg);
       color: var(--text-color);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 20px;
       margin-top: 20px;
-      border-left: 4px solid #667eea;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      transition: background 0.3s ease, color 0.3s ease;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .chart-container {
@@ -152,96 +146,110 @@
       height: 400px;
       margin-top: 20px;
       background: var(--chart-bg);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 15px;
-      transition: background 0.3s ease;
+      border: 1px solid var(--border-color);
     }
 
     .progress-bar {
       background: var(--progress-bg);
-      border-radius: 10px;
-      height: 20px;
+      border-radius: 6px;
+      height: 18px;
       margin: 10px 0;
       overflow: hidden;
-      transition: background 0.3s ease;
+      border: 1px solid var(--border-color);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      border-radius: 10px;
+      background: var(--accent-color);
+      border-radius: 6px;
       transition: width 0.3s ease;
     }
-    /* Theme switcher styles */
-    .theme-switch {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
+
+    /* Resource breakdown styles for better visibility */
+    .cost-breakdown, .primogem-breakdown {
+      color: #ffffff;
+      font-size: 15px;
+      line-height: 1.8;
     }
     
-    .theme-switch-toggle {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 30px;
-    }
-    
-    .theme-switch-toggle input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 22px;
-      width: 22px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    
-    input:checked + .slider {
-      background-color: #667eea;
-    }
-    
-    input:checked + .slider:before {
-      transform: translateX(30px);
-    }
-    
-    .theme-icon {
-      margin: 0 8px;
+    .cost-breakdown h4 {
+      color: #ffffff;
       font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
     }
     
-    /* Loading spinner styles */
-    .loading-spinner {
-      display: none;
-      border: 3px solid rgba(102, 126, 234, 0.3);
+    .primogem-breakdown div {
+      color: #e8e8e8;
+      font-size: 15px;
+      margin: 6px 0;
+      font-weight: 500;
+    }
+    
+    .primogem-breakdown span,
+    .cost-breakdown span {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    
+    /* Results text visibility */
+    .results {
+      color: #ffffff;
+      font-size: 15px;
+    }
+    
+    .results h3 {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    
+    .results p {
+      color: #e8e8e8;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    
+    .results ul {
+      color: #e8e8e8;
+    }
+    
+    .results li {
+      color: #e8e8e8;
+      font-size: 15px;
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+    
+    /* Checkbox wrapper text */
+    .checkbox-wrapper label {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    
+    /* Input and select text */
+    input, select {
+      color: #ffffff !important;
+      font-weight: 500;
+    }
+    
+    input::placeholder {
+      color: #999 !important;
+    }
+
+    
+    /* Calculation spinner styles */
+    .calc-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(91, 141, 239, 0.2);
       border-radius: 50%;
-      border-top: 3px solid #667eea;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      margin: 0 10px;
+      border-top-color: var(--accent-color);
+      animation: spin 0.8s linear infinite;
     }
     
     @keyframes spin {
@@ -249,24 +257,47 @@
       100% { transform: rotate(360deg); }
     }
     
-    .calculating {
-      opacity: 0.6;
-      cursor: not-allowed;
+    /* Improved checkbox styling */
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-color);
+      margin-right: 8px;
     }
     
-    .calculating .loading-spinner {
-      display: inline-block;
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+    }
+    
+    .checkbox-wrapper label {
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+    
+    .checkbox-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    /* Input hover effects */
+    input[type="number"]:hover,
+    select:hover {
+      border-color: #3a4152;
+    }
+    
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.1);
     }
     
     /* Mobile responsiveness */
     @media (max-width: 768px) {
-      .theme-switch {
-        position: relative;
-        top: auto;
-        right: auto;
-        margin: 10px 0;
-      }
-      
       .input-group {
         grid-template-columns: 1fr;
       }
@@ -276,17 +307,53 @@
       }
       
       .container {
-        padding: 20px;
+        padding: 15px;
       }
       
       h1 {
-        font-size: 2em;
+        font-size: 1.8em;
       }
-      
       
       .main-content {
         margin-left: 0;
         padding-top: 80px;
+      }
+      
+      input, select {
+        padding: 14px 12px;
+        font-size: 16px;
+        min-height: 48px;
+      }
+      
+      button {
+        padding: 16px 24px;
+        font-size: 16px;
+        min-height: 52px;
+      }
+      
+      .section {
+        padding: 15px;
+      }
+      
+      .section h3 {
+        font-size: 1.2em;
+      }
+      
+      label {
+        font-size: 15px;
+        margin-top: 14px;
+      }
+      
+      .chart-container {
+        height: 300px;
+        padding: 10px;
+      }
+      
+      input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        min-height: 22px;
       }
     }
     
@@ -524,11 +591,12 @@
       top: 0;
       width: 250px;
       height: 100vh;
-      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      background: #0f1419;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
       transition: left 0.3s ease;
       z-index: 1000;
       overflow-y: auto;
+      border-right: 1px solid var(--border-color);
     }
     
     .sidebar.active {
@@ -539,7 +607,7 @@
       display: flex;
       align-items: center;
       padding: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--border-color);
       color: white;
     }
     
@@ -547,12 +615,13 @@
       width: 40px;
       height: 40px;
       margin-right: 15px;
-      border-radius: 8px;
+      border-radius: 6px;
     }
     
     .sidebar-header h2 {
       margin: 0;
       font-size: 1.2em;
+      font-weight: 600;
     }
     
     .nav-menu {
@@ -568,17 +637,24 @@
     .nav-link {
       display: flex;
       align-items: center;
-      padding: 15px 20px;
-      color: rgba(255, 255, 255, 0.8);
+      padding: 12px 20px;
+      color: var(--label-color);
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       border-left: 3px solid transparent;
+      font-size: 14px;
     }
     
-    .nav-link:hover, .nav-link.active {
+    .nav-link:hover {
       color: white;
-      background: rgba(255, 255, 255, 0.1);
-      border-left-color: white;
+      background: rgba(91, 141, 239, 0.1);
+      border-left-color: var(--accent-color);
+    }
+    
+    .nav-link.active {
+      color: white;
+      background: rgba(91, 141, 239, 0.15);
+      border-left-color: var(--accent-color);
     }
     
     .nav-link i {
@@ -596,12 +672,30 @@
     
     .language-selector select {
       width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #1a1f2e;
+      color: #ffffff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    
+    .language-selector select:hover {
+      border-color: var(--accent-color);
+    }
+    
+    .language-selector select:focus {
+      border-color: var(--accent-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.1);
+    }
+    
+    .language-selector select option {
+      background: #1a1f2e;
+      color: #ffffff;
       padding: 8px;
-      border: none;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #333;
-      font-size: 12px;
     }
     
     
@@ -638,50 +732,89 @@
       background: transparent;
       margin: 0;
     }
+
+    /* Sidebar toggle controls */
+    .sidebar-toggle {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: auto !important;
+      margin-top: 0 !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      line-height: 1;
+      font-size: 18px;
+    }
+
+    .floating-toggle {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 12px;
+      z-index: 1100;
+      display: none;
+      width: auto !important;
+      margin-top: 0 !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      line-height: 1;
+      font-size: 20px;
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    @media (min-width: 769px) {
+      .floating-toggle { display: none !important; }
+    }
+
+    @media (max-width: 768px) {
+      .floating-toggle { display: block; }
+    }
     
     .page-content.active {
       display: block !important;
     }
-    
+
+    /* Starglitter checkbox layout */
+    .checkbox-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .checkbox-stack label {
+      margin-top: 0;
+    }
     
     /* Home page specific styles */
     .hero-section {
       text-align: center;
       padding: 40px 0;
-      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.08) 50%, rgba(118, 75, 162, 0.08) 100%);
+      background: var(--section-bg);
       color: var(--text-color);
-      border-radius: 12px;
+      border-radius: 8px;
       margin-bottom: 30px;
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.12);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .hero-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-      animation: gentle-pulse 8s ease-in-out infinite;
-      pointer-events: none;
-    }
-    
-    @keyframes gentle-pulse {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.1); }
+      border: 1px solid var(--border-color);
     }
     
     .hero-section h1 {
       font-size: 2.5em;
       margin-bottom: 15px;
       color: var(--text-color);
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 600;
     }
     
     .hero-section p {
@@ -699,50 +832,29 @@
     }
     
     .feature-card {
-      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.05) 100%);
+      background: var(--section-bg);
       padding: 25px;
-      border-radius: 12px;
+      border-radius: 8px;
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.08);
-      border: 1px solid rgba(102, 126, 234, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.06) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      border: 1px solid var(--border-color);
     }
     
     .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
-      background: linear-gradient(135deg, var(--container-bg) 0%, rgba(102, 126, 234, 0.08) 100%);
-    }
-    
-    .feature-card:hover::before {
-      opacity: 1;
+      transform: translateY(-2px);
+      border-color: var(--accent-color);
     }
     
     .feature-icon {
       font-size: 2.5em;
       margin-bottom: 15px;
-      filter: grayscale(0.3);
     }
     
     .feature-card h3 {
       color: var(--text-color);
       margin-bottom: 15px;
       font-size: 1.3em;
+      font-weight: 600;
     }
     
     .feature-card p {
@@ -753,22 +865,21 @@
     }
     
     .feature-card button {
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: var(--accent-color);
       color: white;
       border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 6px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: background-color 0.2s ease;
       width: auto;
       margin-top: 0;
     }
     
     .feature-card button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      background: #4a7de8;
     }
     
   /* Blog page styles */
@@ -1048,6 +1159,7 @@
     <div class="sidebar-header">
       <img src="Enhanced_Genshin_Pull_Calculator.png" alt="Logo">
       <h2>Harry's Hub</h2>
+      <button id="sidebarToggleBtn" class="sidebar-toggle" aria-label="Toggle sidebar"><span id="sidebarToggleIcon">&lt;</span></button>
     </div>
     <ul class="nav-menu">
       <li class="nav-item"><a href="#home" class="nav-link active" data-page="home"><i class="fas fa-home"></i> <span class="i18n" data-key="home">Home</span></a></li>
@@ -1064,7 +1176,7 @@
     </div>
   </div>
 
-
+  <button id="floatingSidebarToggle" class="floating-toggle" aria-label="Open sidebar">&gt;</button>
 
   <div class="main-content">
     <!-- Home Page -->
@@ -1119,19 +1231,6 @@
     <!-- Calculator Page -->
     <div id="calculatorPage" class="page-content">
       <div id="mainContainer" class="container">
-    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
-      <div class="theme-switch">
-        <span class="theme-icon">☀️</span>
-        <label class="theme-switch-toggle">
-          <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
-          <span class="slider"></span>
-        </label>
-        <span class="theme-icon">🌙</span>
-      </div>
-    </div>
-    
-
-    
     <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
       <img src="Enhanced_Genshin_Pull_Calculator.png" alt="Enhanced Genshin Pull Calculator Logo" style="height: 80px; margin-right: 15px;">
       <h1 style="margin: 0;">Enhanced Genshin Pull Calculator</h1>
@@ -1140,7 +1239,7 @@
         Made by Harry
       </div>
       <div class="version-info" style="text-align: center; font-size: 0.8em; margin-bottom: 20px; color: var(--credits-color);">
-        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;"><i class="fas fa-history" style="margin-right: 5px;"></i>Version 5.8</a>
+        <a href="javascript:void(0);" class="version-link" onclick="openChangelogModal(); return false;"><i class="fas fa-history" style="margin-right: 5px;"></i>Version 6.1</a>
       </div>
 
     <div class="section">
@@ -1158,24 +1257,30 @@
           <label for="genesis">Genesis Crystals:</label>
           <input type="number" id="genesis" value="0" min="0" max="999999" step="1" oninput="validateAndUpdateResources(this)">
         </div>
-        <div>
-          <label for="stardust">Masterless Stardust:</label>
-          <input type="number" id="stardust" value="0" min="0" max="999999" step="75" oninput="validateAndUpdateResources(this)">
-        </div>
-        <div>
-          <label for="starglitter">Masterless Starglitter:</label>
-          <input type="number" id="starglitter" value="0" min="0" max="999999" step="5" oninput="validateAndUpdateResources(this)">
+      </div>
+      <div class="checkbox-wrapper checkbox-stack">
+        <label for="useStarglitter">Use starglitter for pulls</label>
+        <input type="checkbox" id="useStarglitter" onchange="updateResourceSummary()">
+      </div>
+      
+      <div style="margin-top: 15px;">
+        <label style="margin-bottom: 8px; display: block; font-size: 13px; color: var(--label-color);">Quick Presets:</label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button onclick="setQuickPreset(90)" style="width: auto; margin: 0; padding: 8px 14px; font-size: 13px;">90 pulls (1 pity)</button>
+          <button onclick="setQuickPreset(180)" style="width: auto; margin: 0; padding: 8px 14px; font-size: 13px;">180 pulls (guaranteed)</button>
+          <button onclick="setQuickPreset(360)" style="width: auto; margin: 0; padding: 8px 14px; font-size: 13px;">360 pulls (C1)</button>
+          <button onclick="setQuickPreset(0)" style="width: auto; margin: 0; padding: 8px 14px; font-size: 13px; background: #dc3545;">Clear</button>
         </div>
       </div>
+      
       <div id="resourceSummary" class="cost-breakdown">
         <h4>Total Available Pulls: <span id="totalPulls">0</span></h4>
         <div class="primogem-breakdown">
           <div>Primos: <span id="primoPulls">0</span> pulls</div>
           <div>Fates: <span id="fatePulls">0</span> pulls</div>
           <div>Genesis: <span id="genesisPulls">0</span> pulls</div>
-          <div>Stardust: <span id="stardustPulls">0</span> pulls</div>
-          <div>Starglitter: <span id="starglitterPulls">0</span> pulls</div>
         </div>
+        <div>Starglitter Pulls: <span id="starglitterPulls">0</span></div>
       </div>
     </div>
 
@@ -1190,7 +1295,7 @@
         <div class="input-group">
           <div>
             <label for="constellations">Constellation Goal:</label>
-            <select id="constellations">
+            <select id="constellations" onchange="autoCalculate()">
               <option value="0">C0 (Base Character)</option>
               <option value="1">C1</option>
               <option value="2">C2</option>
@@ -1214,6 +1319,7 @@
           <div class="progress-bar">
             <div id="charPityProgress" class="progress-fill" style="width: 0%"></div>
           </div>
+          <div id="charPityWarning" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(255, 193, 7, 0.15); border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px; color: #ffc107;"></div>
         </div>
         <div>
           <div class="tooltip-wrapper">
@@ -1260,7 +1366,7 @@
         <div class="input-group">
           <div>
             <label for="refinements">Refinement Goal:</label>
-            <select id="refinements">
+            <select id="refinements" onchange="autoCalculate()">
               <option value="0">R1 (Base Weapon)</option>
               <option value="1">R2</option>
               <option value="2">R3</option>
@@ -1274,6 +1380,7 @@
             <div class="progress-bar">
               <div id="weapPityProgress" class="progress-fill" style="width: 0%"></div>
             </div>
+            <div id="weapPityWarning" style="display: none; margin-top: 8px; padding: 8px 12px; background: rgba(255, 193, 7, 0.15); border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px; color: #ffc107;"></div>
           </div>
         <div>
           <div class="tooltip-wrapper">
@@ -1294,39 +1401,13 @@
       </div>
     </div>
 
-    <div class="section">
-      <h3>Simulation Settings</h3>
-      <div class="input-group">
-        <div>
-          <label for="simulations">Number of Simulations:</label>
-          <select id="simulations">
-            <option value="1000">1,000 (Fast)</option>
-            <option value="10000" selected>10,000 (Recommended)</option>
-            <option value="100000">100,000 (Precise)</option>
-          </select>
-        </div>
-        <div>
-          <label for="luckMode">Analysis Mode:</label>
-          <select id="luckMode">
-            <option value="simulation">Monte Carlo Simulation</option>
-            <option value="scenarios">Luck Scenarios</option>
-            <option value="both" selected>Both</option>
-          </select>
-        </div>
-      </div>
 
-      <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; font-size: 14px; line-height: 1.5;">
-        <h4 style="margin: 0 0 10px 0; color: #333;">Analysis Mode Explanations:</h4>
-        <p><strong>Monte Carlo Simulation:</strong> Runs thousands of random pull sessions to calculate realistic probability distributions. This method accounts for the randomness of gacha mechanics and provides statistical confidence intervals.</p>
-        <p><strong>Luck Scenarios:</strong> Shows deterministic calculations for best-case (win all 50/50s), worst-case (lose all 50/50s), and expected outcomes. Useful for planning and budgeting.</p>
-        <p><strong>Both:</strong> Combines simulation results with scenario analysis for comprehensive insights into your pulling strategy.</p>
+    <div id="calculationStatus" style="display: none; text-align: center; padding: 15px; margin: 20px 0; background: var(--section-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="display: inline-flex; align-items: center; gap: 10px; color: var(--accent-color);">
+        <div class="calc-spinner"></div>
+        <span>Calculating probabilities...</span>
       </div>
     </div>
-
-    <button id="calculateBtn" onclick="calculate()">
-      Calculate Probabilities
-      <div class="loading-spinner"></div>
-    </button>
 
     <div id="results"></div>
 
@@ -1348,27 +1429,7 @@
       </div>
     </div>
     
-    <div class="section">
-      <h3>Save/Load Configuration</h3>
-      <div class="input-group">
-        <div>
-          <button onclick="saveConfiguration()" style="margin-top: 0;">Save Current Configuration</button>
-        </div>
-        <div>
-          <button onclick="loadConfiguration()" style="margin-top: 0;">Load Saved Configuration</button>
-        </div>
-        <div>
-          <button onclick="exportConfiguration()" style="margin-top: 0;">Export Configuration</button>
-        </div>
-        <div>
-          <button onclick="document.getElementById('importFile').click()" style="margin-top: 0;">Import Configuration</button>
-          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importConfiguration(event)">
-        </div>
-        <div>
-          <button onclick="exportResults()" style="margin-top: 0;" id="exportResultsBtn" disabled>Export Results (CSV)</button>
-        </div>
-      </div>
-    </div>
+    <!-- Save/Load/Export Configuration section removed in v6.1 -->
     
     
     <!-- Changelog Modal -->
@@ -1376,6 +1437,20 @@
       <div class="modal-content">
         <span class="close" onclick="closeChangelogModal()">&times;</span>
         <h2 style="color: var(--text-color); margin-top: 0;">Changelog</h2>
+        
+        <div class="changelog-item">
+          <div class="changelog-version">Version 6.1</div>
+          <div class="changelog-date">November 22, 2025</div>
+          <div class="changelog-changes">
+            <ul>
+              <li>📱 Added mobile sidebar toggle with floating button</li>
+              <li>🔧 Replaced Stardust/Starglitter inputs with a Starglitter-to-pulls button</li>
+              <li>🧹 Removed Save/Load/Export configuration and CSV export</li>
+              <li>🎯 Simplified Analysis Mode to Monte Carlo only</li>
+              <li>🧪 Restricted Simulation Count to 100,000 (default)</li>
+            </ul>
+          </div>
+        </div>
         
         <div class="changelog-item">
           <div class="changelog-version">Version 5.8</div>
@@ -1444,6 +1519,19 @@
         
         <!-- Changelog Entries -->
         <div class="changelog-list">
+          <div class="changelog-item">
+            <div class="changelog-version">Version 6.1</div>
+            <div class="changelog-date">November 22, 2025</div>
+            <div class="changelog-changes">
+              <ul>
+                <li>📱 Added mobile sidebar toggle with floating button</li>
+                <li>🔧 Replaced Stardust/Starglitter inputs with a Starglitter-to-pulls button</li>
+                <li>🧹 Removed Save/Load/Export configuration and CSV export</li>
+                <li>🎯 Simplified Analysis Mode to Monte Carlo only</li>
+                <li>🧪 Restricted Simulation Count to 100,000 (default)</li>
+              </ul>
+            </div>
+          </div>
           <div class="changelog-item">
             <div class="changelog-version">Version 5.8</div>
             <div class="changelog-date">January 15, 2025</div>
@@ -1524,9 +1612,49 @@ function showPage(pageName) {
     activeLink.classList.add('active');
   }
   
-  // Close sidebar on mobile after navigation (only if user clicked a nav link)
-  // Don't auto-close on initial page load or programmatic page switches
+  // Close sidebar on mobile after navigation and update toggle
+  if (window.innerWidth <= 768) {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.remove('active');
+    if (typeof updateSidebarToggleState === 'function') {
+      updateSidebarToggleState();
+    }
+  }
 }
+
+// Sidebar toggle handlers
+function updateSidebarToggleState() {
+  const sidebar = document.querySelector('.sidebar');
+  const isActive = sidebar.classList.contains('active') || window.innerWidth >= 769;
+  const icon = document.getElementById('sidebarToggleIcon');
+  const floatBtn = document.getElementById('floatingSidebarToggle');
+  if (icon) icon.textContent = isActive ? '<' : '>';
+  if (floatBtn) {
+    if (window.innerWidth <= 768) {
+      floatBtn.style.display = isActive ? 'none' : 'block';
+    } else {
+      floatBtn.style.display = 'none';
+    }
+  }
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (window.innerWidth <= 768) {
+    sidebar.classList.toggle('active');
+  }
+  updateSidebarToggleState();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('sidebarToggleBtn');
+  const floatBtn = document.getElementById('floatingSidebarToggle');
+  if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+  if (floatBtn) floatBtn.addEventListener('click', toggleSidebar);
+  updateSidebarToggleState();
+});
+
+window.addEventListener('resize', updateSidebarToggleState);
 
 function changeLanguage(lang) {
   window.currentLanguage = lang;
@@ -2052,61 +2180,138 @@ function updateResourceSummary() {
   const p = +document.getElementById('primos').value || 0;
   const f = +document.getElementById('fates').value || 0;
   const g = +document.getElementById('genesis').value || 0;
-  const s = +document.getElementById('stardust').value || 0;
-  const sg = +document.getElementById('starglitter').value || 0;
-  const pp = Math.floor(p / 160), fp = f, gp = Math.floor(g / 160), sp = Math.floor(s / 75), sgp = Math.floor(sg / 5);
-  const total = pp + fp + gp + sp + sgp;
+  const pp = Math.floor(p / 160), fp = f, gp = Math.floor(g / 160);
+  const basePulls = pp + fp + gp;
+  
+  // Calculate starglitter pulls if checkbox is enabled
+  let glitterPulls = 0;
+  const useStarglitter = document.getElementById('useStarglitter').checked;
+  if (useStarglitter) {
+    const avgGlitterPerPull = 0.2;
+    const estimatedGlitter = Math.floor(basePulls * avgGlitterPerPull);
+    glitterPulls = Math.floor(estimatedGlitter / 5);
+  }
+  
+  const total = basePulls + glitterPulls;
+  
   document.getElementById('primoPulls').textContent = pp;
   document.getElementById('fatePulls').textContent = fp;
   document.getElementById('genesisPulls').textContent = gp;
-  document.getElementById('stardustPulls').textContent = sp;
-  document.getElementById('starglitterPulls').textContent = sgp;
+  document.getElementById('starglitterPulls').textContent = glitterPulls;
   document.getElementById('totalPulls').textContent = total;
   updatePityProgress();
+  autoCalculate();
 }
+
+// Quick preset function for common pull amounts
+function setQuickPreset(pulls) {
+  if (pulls === 0) {
+    document.getElementById('primos').value = 0;
+    document.getElementById('fates').value = 0;
+    document.getElementById('genesis').value = 0;
+  } else {
+    // Set as fates for simplicity
+    document.getElementById('primos').value = 0;
+    document.getElementById('fates').value = pulls;
+    document.getElementById('genesis').value = 0;
+  }
+  updateResourceSummary();
+}
+
+/* applyStarglitterPulls removed in v6.1 — replaced by starglitter amount input and checkbox toggle */
 
 function updatePityProgress() {
   const char = Math.max(0, Math.min(89, +document.getElementById('charPity').value || 0));
   const weap = Math.max(0, Math.min(79, +document.getElementById('weapPity').value || 0));
   
-  // Update the input values to match the clamped values
   document.getElementById('charPity').value = char;
   document.getElementById('weapPity').value = weap;
   
   document.getElementById('charPityProgress').style.width = (char / 90 * 100) + '%';
   document.getElementById('weapPityProgress').style.width = (weap / 80 * 100) + '%';
+  
+  const charWarning = document.getElementById('charPityWarning');
+  const weapWarning = document.getElementById('weapPityWarning');
+  const charGuaranteed = document.getElementById('charGuaranteed').value === 'true';
+  const radiancePity = +document.getElementById('radiancePity').value;
+  
+  if (char >= 73) {
+    charWarning.style.display = 'block';
+    if (char >= 80) {
+      charWarning.innerHTML = '<strong>⚠️ High Pity!</strong> You\'re very close to hard pity (90). You\'ll likely get a 5★ within the next few pulls!';
+    } else {
+      charWarning.innerHTML = '<strong>💫 Soft Pity!</strong> You\'re in soft pity range. Your chances of getting a 5★ are significantly increased!';
+    }
+  } else if (char >= 60) {
+    charWarning.style.display = 'block';
+    charWarning.innerHTML = '<strong>📊 Building Pity:</strong> Getting close to soft pity (starts at 74). About ' + (74 - char) + ' pulls away.';
+  } else if (char > 0 && !charGuaranteed && radiancePity === 0) {
+    charWarning.style.display = 'block';
+    charWarning.innerHTML = '<strong>💡 Tip:</strong> If you recently lost 50/50, make sure to set "Next Character Guaranteed" to Yes and update Radiance Pity.';
+  } else {
+    charWarning.style.display = 'none';
+  }
+  
+  if (weap >= 63) {
+    weapWarning.style.display = 'block';
+    if (weap >= 70) {
+      weapWarning.innerHTML = '<strong>⚠️ High Pity!</strong> You\'re very close to hard pity (80). You\'ll likely get a 5★ weapon soon!';
+    } else {
+      weapWarning.innerHTML = '<strong>💫 Soft Pity!</strong> You\'re in soft pity range for weapons. Increased 5★ rates!';
+    }
+  } else if (weap >= 50) {
+    weapWarning.style.display = 'block';
+    weapWarning.innerHTML = '<strong>📊 Building Pity:</strong> Getting close to soft pity (starts at 63). About ' + (63 - weap) + ' pulls away.';
+  } else {
+    weapWarning.style.display = 'none';
+  }
+  
+  autoCalculate();
 }
 
 function toggleCharacterInputs() {
   const checked = document.getElementById('wantCharacter').checked;
   document.getElementById('characterInputs').style.display = checked ? 'block' : 'none';
+  autoCalculate();
 }
 
 function toggleWeaponInputs() {
   const checked = document.getElementById('wantWeapon').checked;
   document.getElementById('weaponInputs').style.display = checked ? 'block' : 'none';
+  autoCalculate();
 }
 
+// Debounce timer for auto-calculation
+let autoCalculateTimer = null;
+let isCalculating = false;
+
 async function calculate() {
-  const calculateBtn = document.getElementById('calculateBtn');
   const totalPulls = +document.getElementById('totalPulls').textContent;
   const wantChar = document.getElementById('wantCharacter').checked;
   const wantWeap = document.getElementById('wantWeapon').checked;
   
-  // Input validation
+  const statusDiv = document.getElementById('calculationStatus');
+  const resultsDiv = document.getElementById('results');
+  
+  // Silent validation - just don't calculate if invalid
   if (!wantChar && !wantWeap) {
-    alert('Please select at least one goal (character or weapon).');
+    statusDiv.style.display = 'none';
+    resultsDiv.innerHTML = '<div class="results"><p style="color: var(--label-color);">Select a goal (character or weapon) to see probabilities.</p></div>';
     return;
   }
   
   if (totalPulls === 0) {
-    alert('Please enter your available resources (primogems, fates, etc.).');
+    statusDiv.style.display = 'none';
+    resultsDiv.innerHTML = '<div class="results"><p style="color: var(--label-color);">Enter your resources to see probabilities.</p></div>';
     return;
   }
   
-  // Show loading state
-  calculateBtn.classList.add('calculating');
-  calculateBtn.disabled = true;
+  // Show calculating status
+  statusDiv.style.display = 'block';
+  isCalculating = true;
+  
+  // Small delay to let UI update
+  await new Promise(resolve => setTimeout(resolve, 10));
   
   const charGoal = wantChar ? +document.getElementById('constellations').value + 1 : 0;
   const weapGoal = wantWeap ? +document.getElementById('refinements').value + 1 : 0;
@@ -2115,18 +2320,31 @@ async function calculate() {
   const charGuaranteed = document.getElementById('charGuaranteed').value === 'true';
   const fatePoints = +document.getElementById('fatepoints').value;
   const radiancePity = wantChar ? +document.getElementById('radiancePity').value : 0;
-  const numSims = +document.getElementById('simulations').value;
-  const mode = document.getElementById('luckMode').value;
+  
+  const isMobile = window.innerWidth <= 768;
+  const isLowEndDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+  let numSims = 100000;
+  let performanceMode = 'Standard';
+  
+  if (isMobile || isLowEndDevice) {
+    numSims = 50000;
+    performanceMode = 'Fast (Mobile)';
+  }
+  if (totalPulls > 500) {
+    numSims = Math.max(30000, Math.floor(numSims * 0.7));
+    performanceMode = 'Fast (Large calculation)';
+  }
 
   let output = '<div class="results">';
   
-  if (mode === 'simulation' || mode === 'both') {
+  {
     const simResults = calculator.runCombinedSimulation(
       charGoal, charPity, charGuaranteed,
       weapGoal, weapPity, fatePoints, totalPulls, numSims, radiancePity
     );
 
     output += '<h3>Monte Carlo Simulation Results</h3>';
+    output += `<p style="font-size: 12px; color: var(--label-color); margin-bottom: 15px;">${numSims.toLocaleString()} simulations • ${performanceMode} mode</p>`;
     if (wantChar) {
       output += `<p>Character Success Rate: ${(simResults.charSuccessRate * 100).toFixed(1)}%</p>`;
     }
@@ -2151,205 +2369,34 @@ async function calculate() {
     createChart(simResults);
   }
 
-  if (mode === 'scenarios' || mode === 'both') {
-    const scenarios = calculator.calculateCombinedScenarios(
-      charGoal, charPity, charGuaranteed,
-      weapGoal, weapPity, fatePoints
-    );
-
-    output += '<h3>Luck Scenarios</h3>';
-    if (wantChar) {
-      output += '<h4>Character Banner</h4>';
-      output += `<ul>`;
-      output += `<li>Best case (win all 50/50): ${scenarios.charBest} pulls</li>`;
-      output += `<li>Expected case: ${scenarios.charExpected} pulls</li>`;
-      output += `<li>Worst case (lose all 50/50): ${scenarios.charWorst} pulls</li>`;
-      output += `</ul>`;
-      
-      // Add personalized progress messages for character banner
-      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 3px solid #667eea;">';
-      output += '<h5 style="margin: 0 0 10px 0; color: #667eea;">📊 Your Progress Analysis</h5>';
-      
-      if (totalPulls >= scenarios.charBest) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.charBest} more than needed! Great job saving up!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.charBest - totalPulls} more pulls to reach the best case scenario.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.charExpected) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.charExpected} pulls ahead! Excellent preparation!</p>`;
-      } else {
-        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.charExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.charWorst) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.charWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
-      }
-      output += '</div>';
-    }
-    if (wantWeap) {
-      output += '<h4>Weapon Banner</h4>';
-      output += `<ul>`;
-      output += `<li>Best case: ${scenarios.weapBest} pulls</li>`;
-      output += `<li>Expected case: ${scenarios.weapExpected} pulls</li>`;
-      output += `<li>Worst case: ${scenarios.weapWorst} pulls</li>`;
-      output += `</ul>`;
-      
-      // Add personalized progress messages for weapon banner
-      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(118, 75, 162, 0.1); border-radius: 8px; border-left: 3px solid #764ba2;">';
-      output += '<h5 style="margin: 0 0 10px 0; color: #764ba2;">⚔️ Your Weapon Progress Analysis</h5>';
-      
-      if (totalPulls >= scenarios.weapBest) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.weapBest} more than needed! Great job saving up!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.weapBest - totalPulls} more pulls to reach the best case scenario.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.weapExpected) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.weapExpected} pulls ahead! Excellent preparation!</p>`;
-      } else {
-        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.weapExpected - totalPulls} more pulls to reach the expected scenario.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.weapWorst) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're covered even for bad luck! Amazing planning!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.weapWorst - totalPulls} more pulls to guarantee success even with bad luck.</p>`;
-      }
-      output += '</div>';
-    }
-    if (wantChar && wantWeap) {
-      output += '<h4>Combined Total</h4>';
-      output += `<ul>`;
-      output += `<li>Best case: ${scenarios.combinedBest} pulls</li>`;
-      output += `<li>Expected case: ${scenarios.combinedExpected} pulls</li>`;
-      output += `<li>Worst case: ${scenarios.combinedWorst} pulls</li>`;
-      output += `</ul>`;
-      
-      // Add personalized progress messages for combined goals
-      output += '<div style="margin-top: 15px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; border-left: 3px solid #a855f7;">';
-      output += '<h5 style="margin: 0 0 10px 0; color: #a855f7;">🎯 Combined Goals Progress Analysis</h5>';
-      
-      if (totalPulls >= scenarios.combinedBest) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">🎉 For best case: You have ${totalPulls} pulls - that's ${totalPulls - scenarios.combinedBest} more than needed for both goals! Incredible planning!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">😔 For best case: You need ${scenarios.combinedBest - totalPulls} more pulls to get both character and weapon in the best case.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.combinedExpected) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">✨ For expected case: You have ${totalPulls} pulls - you're ${totalPulls - scenarios.combinedExpected} pulls ahead for both goals! Masterful preparation!</p>`;
-      } else {
-        output += `<p style="color: #ffc107;">⚠️ For expected case: You need about ${scenarios.combinedExpected - totalPulls} more pulls to reach both goals in the expected scenario.</p>`;
-      }
-      
-      if (totalPulls >= scenarios.combinedWorst) {
-        output += `<p style="color: #2ecc71; font-weight: bold;">💪 For worst case: You have ${totalPulls} pulls - you're completely safe even with terrible luck on both banners! Legendary planning!</p>`;
-      } else {
-        output += `<p style="color: #dc3545;">💔 For worst case: You need ${scenarios.combinedWorst - totalPulls} more pulls to guarantee both goals even with the worst luck.</p>`;
-      }
-      output += '</div>';
-    }
-  }
-
   output += '</div>';
-  document.getElementById('results').innerHTML = output;
+  resultsDiv.innerHTML = output;
   
-  // Hide loading state
-  calculateBtn.classList.remove('calculating');
-  calculateBtn.disabled = false;
+  // Hide calculating status
+  statusDiv.style.display = 'none';
+  isCalculating = false;
+}
+
+// Auto-calculate with debouncing (waits 700ms after last input for better performance)
+function autoCalculate() {
+  // Show status immediately when user starts typing
+  const statusDiv = document.getElementById('calculationStatus');
+  if (!isCalculating) {
+    statusDiv.style.display = 'block';
+  }
+  
+  clearTimeout(autoCalculateTimer);
+  autoCalculateTimer = setTimeout(() => {
+    calculate();
+  }, 700);
 }
 // This function is replaced by the enhanced version above
 
-function saveConfiguration() {
-  const config = {
-    primos: document.getElementById('primos').value,
-    fates: document.getElementById('fates').value,
-    genesis: document.getElementById('genesis').value,
-    stardust: document.getElementById('stardust').value,
-    starglitter: document.getElementById('starglitter').value,
-    wantCharacter: document.getElementById('wantCharacter').checked,
-    constellations: document.getElementById('constellations').value,
-    charPity: document.getElementById('charPity').value,
-    charGuaranteed: document.getElementById('charGuaranteed').value,
-    radiancePity: document.getElementById('radiancePity').value,
-    wantWeapon: document.getElementById('wantWeapon').checked,
-    refinements: document.getElementById('refinements').value,
-    weapPity: document.getElementById('weapPity').value,
-    fatepoints: document.getElementById('fatepoints').value,
-    simulations: document.getElementById('simulations').value,
-    luckMode: document.getElementById('luckMode').value
-  };
-  
-  localStorage.setItem('genshinWishConfig', JSON.stringify(config));
-  alert('Configuration saved successfully!');
-}
+/* saveConfiguration removed in v6.1 */
 
-function loadConfiguration() {
-  const savedConfig = localStorage.getItem('genshinWishConfig');
-  
-  if (!savedConfig) {
-    alert('No saved configuration found.');
-    return;
-  }
-  
-  const config = JSON.parse(savedConfig);
-  
-  // Migration: convert legacy weapGuaranteed to FatePoints
-  if (config.weapGuaranteed === 'true' || config.weapGuaranteed === true) {
-    config.fatepoints = 1;
-    delete config.weapGuaranteed;
-    console.log('Migrated legacy weapGuaranteed=true to fatepoints=1');
-  } else if (config.weapGuaranteed === 'false' || config.weapGuaranteed === false) {
-    config.fatepoints = config.fatepoints || 0;
-    delete config.weapGuaranteed;
-    console.log('Migrated legacy weapGuaranteed=false, kept existing fatepoints');
-  }
-  
-  // Load values into form
-  document.getElementById('primos').value = config.primos || 0;
-  document.getElementById('fates').value = config.fates || 0;
-  document.getElementById('genesis').value = config.genesis || 0;
-  document.getElementById('stardust').value = config.stardust || 0;
-  document.getElementById('starglitter').value = config.starglitter || 0;
-  
-  document.getElementById('wantCharacter').checked = config.wantCharacter;
-  document.getElementById('constellations').value = config.constellations || 0;
-  document.getElementById('charPity').value = config.charPity || 0;
-  document.getElementById('charGuaranteed').value = config.charGuaranteed || 'false';
-  document.getElementById('radiancePity').value = config.radiancePity || 0;
-  
-  document.getElementById('wantWeapon').checked = config.wantWeapon;
-  document.getElementById('refinements').value = config.refinements || 0;
-  document.getElementById('weapPity').value = config.weapPity || 0;
-  document.getElementById('fatepoints').value = config.fatepoints || 0;
-  
-  document.getElementById('simulations').value = config.simulations || 10000;
-  document.getElementById('luckMode').value = config.luckMode || 'both';
-  
-  // Update UI based on loaded values
-  toggleCharacterInputs();
-  toggleWeaponInputs();
-  updateResourceSummary();
-  updateRadiancePityDisplay();
-  updateFatePointsDisplay();
-  updateCharGuaranteedDisplay();
-  
-  alert('Configuration loaded successfully!');
-}
+/* loadConfiguration removed in v6.1 */
 
-// Theme switcher function
-function toggleTheme() {
-  document.body.classList.toggle('dark-mode');
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  localStorage.setItem('darkMode', isDarkMode);
-  
-  // Update chart if it exists
-  if (window.resultsChartInstance) {
-    updateChartTheme(isDarkMode);
-  }
-}
+
 
 function updateChartTheme(isDarkMode) {
   if (!window.resultsChartInstance) return;
@@ -2391,134 +2438,15 @@ function formatNumber(num) {
 }
 
 // Export/Import functionality
-function exportConfiguration() {
-  const config = {
-    primos: document.getElementById('primos').value,
-    fates: document.getElementById('fates').value,
-    genesis: document.getElementById('genesis').value,
-    stardust: document.getElementById('stardust').value,
-    starglitter: document.getElementById('starglitter').value,
-    wantCharacter: document.getElementById('wantCharacter').checked,
-    constellations: document.getElementById('constellations').value,
-    charPity: document.getElementById('charPity').value,
-    charGuaranteed: document.getElementById('charGuaranteed').value,
-    radiancePity: document.getElementById('radiancePity').value,
-    wantWeapon: document.getElementById('wantWeapon').checked,
-    refinements: document.getElementById('refinements').value,
-    weapPity: document.getElementById('weapPity').value,
-    fatepoints: document.getElementById('fatepoints').value,
-    simulations: document.getElementById('simulations').value,
-    luckMode: document.getElementById('luckMode').value,
-    exportDate: new Date().toISOString()
-  };
-  
-  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `genshin-calculator-config-${new Date().toISOString().split('T')[0]}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+/* exportConfiguration removed in v6.1 */
 
-function importConfiguration(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const config = JSON.parse(e.target.result);
-      
-      // Migration: convert legacy weapGuaranteed to FatePoints
-      if (config.weapGuaranteed === 'true' || config.weapGuaranteed === true) {
-        config.fatepoints = 1;
-        delete config.weapGuaranteed;
-        console.log('Migrated legacy weapGuaranteed=true to fatepoints=1');
-      } else if (config.weapGuaranteed === 'false' || config.weapGuaranteed === false) {
-        config.fatepoints = config.fatepoints || 0;
-        delete config.weapGuaranteed;
-        console.log('Migrated legacy weapGuaranteed=false, kept existing fatepoints');
-      }
-      
-      // Load values into form
-      document.getElementById('primos').value = config.primos || 0;
-      document.getElementById('fates').value = config.fates || 0;
-      document.getElementById('genesis').value = config.genesis || 0;
-      document.getElementById('stardust').value = config.stardust || 0;
-      document.getElementById('starglitter').value = config.starglitter || 0;
-      
-      document.getElementById('wantCharacter').checked = config.wantCharacter;
-      document.getElementById('constellations').value = config.constellations || 0;
-      document.getElementById('charPity').value = config.charPity || 0;
-      document.getElementById('charGuaranteed').value = config.charGuaranteed || 'false';
-      document.getElementById('radiancePity').value = config.radiancePity || 0;
-      
-      document.getElementById('wantWeapon').checked = config.wantWeapon;
-      document.getElementById('refinements').value = config.refinements || 0;
-      document.getElementById('weapPity').value = config.weapPity || 0;
-      document.getElementById('fatepoints').value = config.fatepoints || 0;
-      
-      document.getElementById('simulations').value = config.simulations || 10000;
-      document.getElementById('luckMode').value = config.luckMode || 'both';
-      
-      // Update UI based on loaded values
-      toggleCharacterInputs();
-      toggleWeaponInputs();
-      updateResourceSummary();
-      updateRadiancePityDisplay();
-      updateFatePointsDisplay();
-      updateCharGuaranteedDisplay();
-      
-      alert('Configuration imported successfully!');
-    } catch (error) {
-      alert('Error importing configuration: Invalid file format.');
-    }
-  };
-  reader.readAsText(file);
-}
+/* importConfiguration removed in v6.1 */
 
 let lastSimulationResults = null;
 
-function exportResults() {
-  if (!lastSimulationResults) {
-    alert('No simulation results to export. Please run a calculation first.');
-    return;
-  }
-  
-  const csvContent = generateCSV(lastSimulationResults);
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `genshin-simulation-results-${new Date().toISOString().split('T')[0]}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+/* exportResults removed in v6.1 */
 
-function generateCSV(results) {
-  const headers = ['Simulation', 'Success', 'Total_Pulls', 'Character_Success', 'Weapon_Success', 'Characters_Obtained', 'Weapons_Obtained'];
-  let csv = headers.join(',') + '\n';
-  
-  results.results.forEach((result, index) => {
-    const row = [
-      index + 1,
-      result.success ? 'Yes' : 'No',
-      result.totalPullsUsed,
-      result.charSuccess ? 'Yes' : 'No',
-      result.weapSuccess ? 'Yes' : 'No',
-      result.charObtained,
-      result.weapObtained
-    ];
-    csv += row.join(',') + '\n';
-  });
-  
-  return csv;
-}
+/* generateCSV removed in v6.1 */
 
 // Enhanced cumulative probability chart creation with Character/Weapon toggle support
 function createChart(simResults) {
@@ -2674,11 +2602,10 @@ function updateChart() {
       return;
     }
     
-    // Check theme colors
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    const textColor = isDarkMode ? '#e1e1e1' : '#333';
-    const labelColor = isDarkMode ? '#bbb' : '#666';
-    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    // Always use bright colors for dark mode
+    const textColor = '#ffffff';
+    const labelColor = '#e8e8e8';
+    const gridColor = 'rgba(255, 255, 255, 0.2)';
     
     // Create the chart
     window.resultsChartInstance = new Chart(ctx, {
@@ -2695,8 +2622,8 @@ function updateChart() {
           title: {
             display: true,
             text: `Cumulative Probability - ${chartType.charAt(0).toUpperCase() + chartType.slice(1)} Banner`,
-            color: textColor,
-            font: { size: 18, weight: 'bold' },
+            color: '#ffffff',
+            font: { size: 20, weight: 'bold' },
             padding: { top: 10, bottom: 20 }
           },
           legend: {
@@ -2704,10 +2631,10 @@ function updateChart() {
             position: 'top',
             align: 'center',
             labels: {
-              color: textColor,
+              color: '#ffffff',
               usePointStyle: true,
               padding: 15,
-              font: { size: 13, weight: '500' }
+              font: { size: 14, weight: '600' }
             }
           },
           tooltip: {
@@ -2746,13 +2673,13 @@ function updateChart() {
             title: {
               display: true,
               text: 'Total Number of Pulls',
-              color: textColor,
-              font: { size: 14, weight: 'bold' }
+              color: '#ffffff',
+              font: { size: 15, weight: 'bold' }
             },
             ticks: {
-              color: labelColor,
+              color: '#e8e8e8',
               stepSize: Math.max(25, Math.floor(maxPulls / 12)),
-              font: { size: 11 },
+              font: { size: 12 },
               callback: function(value) {
                 return value.toString();
               }
@@ -2769,13 +2696,13 @@ function updateChart() {
             title: {
               display: true,
               text: 'Cumulative Probability (%)',
-              color: textColor,
-              font: { size: 14, weight: 'bold' }
+              color: '#ffffff',
+              font: { size: 15, weight: 'bold' }
             },
             ticks: {
-              color: labelColor,
+              color: '#e8e8e8',
               stepSize: 10,
-              font: { size: 11 },
+              font: { size: 12 },
               callback: function(value) {
                 return value + '%';
               }
@@ -2842,9 +2769,11 @@ function addResourceLine(totalPulls, isDarkMode) {
     
     if (totalPulls > xScale.min && totalPulls < xScale.max) {
       ctx.save();
-      ctx.strokeStyle = isDarkMode ? '#FFD700' : '#FF6500';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
+      
+      // Draw vertical line
+      ctx.strokeStyle = '#ff9500';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]);
       
       const xPos = xScale.getPixelForValue(totalPulls);
       ctx.beginPath();
@@ -2852,12 +2781,22 @@ function addResourceLine(totalPulls, isDarkMode) {
       ctx.lineTo(xPos, chartArea.bottom);
       ctx.stroke();
       
-      // Add label
-      ctx.fillStyle = isDarkMode ? '#FFD700' : '#FF6500';
-      ctx.font = 'bold 12px Arial';
-      ctx.textAlign = 'center';
+      // Add label with background
       ctx.setLineDash([]);
-      ctx.fillText(`Your pulls: ${totalPulls}`, xPos, chartArea.top - 8);
+      ctx.fillStyle = '#ff9500';
+      ctx.font = 'bold 13px Arial';
+      ctx.textAlign = 'center';
+      
+      const labelText = `Your pulls: ${totalPulls}`;
+      const textWidth = ctx.measureText(labelText).width;
+      const padding = 6;
+      
+      // Draw background rectangle
+      ctx.fillRect(xPos - textWidth/2 - padding, chartArea.top - 24, textWidth + padding*2, 18);
+      
+      // Draw text
+      ctx.fillStyle = '#0a0e1a';
+      ctx.fillText(labelText, xPos, chartArea.top - 11);
       
       ctx.restore();
     }
@@ -2923,6 +2862,7 @@ function updateRadiancePityDisplay() {
     radiancePitySelect.setAttribute('aria-label', `Radiance Pity: ${radiancePity}/3`);
     console.log(`Radiance Pity UI updated: Normal state (${radiancePity}/3)`);
   }
+  autoCalculate();
 }
 
 // Update FatePoints display with visual emphasis for guaranteed state
@@ -2941,6 +2881,7 @@ function updateFatePointsDisplay() {
     fatePointsSelect.setAttribute('aria-label', 'Fate points: 0 of 1');
     console.log('FatePoints UI updated: Normal state (0/1)');
   }
+  autoCalculate();
 }
 
 // Update Character Guaranteed display with visual emphasis for guaranteed state
@@ -2959,6 +2900,7 @@ function updateCharGuaranteedDisplay() {
     charGuaranteedSelect.setAttribute('aria-label', 'Next character guaranteed: No (50/50)');
     console.log('Character Guaranteed UI updated: Normal state (No/50-50)');
   }
+  autoCalculate();
 }
 
 // Toggle cost calculator visibility
@@ -3090,13 +3032,12 @@ function updateCostCalculation() {
 // Auto-save inputs to localStorage
 function autoSaveInputs() {
   const inputs = [
-    'primos', 'fates', 'genesis', 'stardust', 'starglitter',
+    'primos', 'fates', 'genesis',
     'constellations', 'charPity', 'charGuaranteed', 'radiancePity',
-    'refinements', 'weapPity', 'fatepoints',
-    'simulations', 'luckMode'
+    'refinements', 'weapPity', 'fatepoints'
   ];
   
-  const checkboxes = ['wantCharacter', 'wantWeapon'];
+  const checkboxes = ['wantCharacter', 'wantWeapon', 'useStarglitter'];
   
   const config = {};
   
@@ -3207,20 +3148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateFatePointsDisplay();
     updateCharGuaranteedDisplay();
     
-    // Check for saved theme preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (savedDarkMode) {
-      document.body.classList.add('dark-mode');
-      const themeSwitch = document.getElementById('themeSwitch');
-      if (themeSwitch) {
-        themeSwitch.checked = true;
-      }
-      // Only update settings theme switch if it exists
-      const settingsThemeSwitch = document.getElementById('settingsThemeSwitch');
-      if (settingsThemeSwitch) {
-        settingsThemeSwitch.checked = true;
-      }
-    }
+
     
     // Add auto-save listeners
     addAutoSaveListeners();
